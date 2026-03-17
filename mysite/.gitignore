@@ -1,0 +1,31 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.env
+.env*
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# PyCharm / IDE
+.idea/
+*.iml
+*.iws
+
+# macOS / Windows siuksles
+.DS_Store
+Thumbs.db
+
+# logai ir laikini
+*.log
