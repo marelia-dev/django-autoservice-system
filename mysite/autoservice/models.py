@@ -34,6 +34,12 @@ class Order(models.Model):
     car = models.ForeignKey(Car, on_delete=models.PROTECT, verbose_name="Automobilis")
     date = models.DateTimeField(verbose_name="Uzsakymo data ir laikas")
 
+    def display_order_line(self):
+        return ", ".join(order.car for order in self.order.all())
+
+    display_order_line.short_description = "Uzsakymo eilute"
+
+
     class Meta:
         verbose_name = "Uzsakymas"
         verbose_name_plural = "Uzsakymai"
@@ -42,22 +48,25 @@ class Order(models.Model):
     def __str__(self):
         return f"Uzsakymas {self.car.license_plate} - {self.date}"
 
-    def total_cost(self):
-        return sum(line.total_cost() for line in self.order_lines.all())
+    def total(self):
+        return sum(line.line_sum() for line in self.order_lines.all())
 
-class Order_line(models.Model):
+class OrderLine(models.Model):
     # Uzsakymo eilute
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_lines", verbose_name="Uzsakymas")
     service = models.ForeignKey(Service, on_delete=models.PROTECT, verbose_name="Paslauga")
     quantity = models.PositiveIntegerField(default=1, verbose_name="Kiekis")
 
     class Meta:
-        verbose_name = "Usakymo eile"
-        verbose_name_plural = "Uzsakymo eiles"
+        verbose_name = "Usakymo eilute"
+        verbose_name_plural = "Uzsakymo eilutes"
 
     def __str__(self):
         return f"{self.service.name} x {self.quantity}"
 
-    def total_cost(self):
-        return self.service.price * self.quantity
+    # Automatiskai apskaiciuota eilutes suma
+    def line_sum(self):
+        if self.service and self.quantity:
+            return self.service.price * self.quantity
+        return 0
 
