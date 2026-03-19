@@ -34,6 +34,22 @@ class Order(models.Model):
     car = models.ForeignKey(Car, on_delete=models.PROTECT, verbose_name="Automobilis")
     date = models.DateTimeField(verbose_name="Uzsakymo data ir laikas")
 
+    # Naujas laukas: statusas
+    STATUS_CHOICES = (
+        ('new', 'Naujas'),
+        ('in_progress', 'Vykdomas'),
+        ('done', 'Baigtas'),
+        ('cancelled', 'Atsauktas'),
+        ('waiting', 'Laukiantis'),
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='new',
+        verbose_name="Uzsakymo busena"
+    )
+
     def display_order_line(self):
         return ", ".join(order.car for order in self.order.all())
 

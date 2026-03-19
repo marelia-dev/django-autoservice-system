@@ -1,0 +1,13 @@
+.hero h1 {
+    color: #ff4444 !important;     /* raudonas */
+    text-shadow: 4px 4px 10px #000 !important;
+}
+.hero {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 80vh;
+    color: white;
+    display: flex;
+    align-items: center;
+}

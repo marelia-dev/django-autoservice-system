@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Car, Service, Order, OrderLine
+from django.utils.html import format_html
 
 
 class OrderLineInline(admin.TabularInline):
@@ -16,8 +17,8 @@ class OrderLineInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('car', 'date', 'display_services', 'total')
-    list_filter = ('date',)
+    list_display = ('car', 'date', 'display_services', 'total', 'status_colored')
+    list_filter = ('date', 'status')
     search_fields = ('car__license_plate', 'car__client_name')
 
     inlines = [OrderLineInline]
@@ -32,6 +33,21 @@ class OrderAdmin(admin.ModelAdmin):
         total = obj.total()
         return f"{total:.2f}" if total > 0 else "0"
 
+    @admin.display(description="Busena", ordering='status')
+    def status_colored(self, obj):
+        colors = {
+            'new': 'blue',
+            'in_progress': 'orange',
+            'done': 'green',
+            'cancelled': 'red',
+            'waiting': 'gray',
+        }
+        color = colors.get(obj.status, 'black')
+        return format_html(
+            '<span style="color: {}; font-weight: bold;">{}</span>',
+            color,
+            obj.get_status_display()
+        )
 
 @admin.register(Car)
 class CarAdmin(admin.ModelAdmin):
