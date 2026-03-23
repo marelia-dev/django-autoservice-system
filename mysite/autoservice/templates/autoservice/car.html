@@ -1,0 +1,28 @@
+{% extends "autoservice/base.html" %}
+
+{% load static %}
+
+{% block title %}Automobilis - {{ car.make }} {{ car.model }}{% endblock %}
+
+{% block content %}
+<h1>{{ car.make }} {{ car.model }}</h1>
+<dl>
+    <dt>Valdytojas / Savininkas</dt>
+    <dd>{{ car.client_name }}</dd>
+
+ <dt>Gamintojas</dt>
+    <dd>{{ car.make }}</dd>
+
+    <dt>Modelis</dt>
+    <dd>{{ car.model }}</dd>
+
+    <dt>Valstybinis numeris</dt>
+    <dd>{{ car.license_plate }}</dd>
+
+    <dt>VIN kodas</dt>
+    <dd>{{ car.vin_code }}</dd>
+    </dl>
+
+<a href="{% url 'automobiliai' %}">Grizti i sarasa</a>
+
+{% endblock %}

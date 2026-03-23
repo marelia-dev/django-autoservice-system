@@ -1,0 +1,21 @@
+{% extends "autoservice/base.html" %}
+
+{% load static %}
+
+{% block title %}Automobiliai{% endblock %}
+
+{% block content %}
+
+<h1>Automobiliai</h1>
+<p>Autoservise uzregistruoti automobiliai:</p>
+<ul>
+    {% for car in automobiliai %}
+    <li>
+        <a href="{% url 'car' car.id %}">{{car.make}} {{car.model}}
+        </a>
+    </li>
+    {% empty %}
+    <li>Nera automobiliu</li>
+{% endfor %}
+</ul>
+{% endblock %}
