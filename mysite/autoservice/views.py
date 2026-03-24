@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
+from django.core.paginator import Paginator
 
 from .models import Service, Order, Car
 
@@ -55,3 +56,13 @@ class OrderListView(generic.ListView):
 
     def get_queryset(self):
         return Order.objects.select_related('car').prefetch_related('order_lines__service')
+
+def automobiliai(request):
+    automobiliai_list = Car.objects.all().order_by('make', 'model')
+    paginator = Paginator(automobiliai_list, 20)
+    page_number = request.GET.get('page')
+    automobiliai = paginator.get_page(page_number)
+    context = {
+        'automobiliai': automobiliai,
+    }
+    return render(request, 'autoservice/automobiliai.html', context=context)

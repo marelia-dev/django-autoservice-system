@@ -18,4 +18,36 @@
     <li>Nera automobiliu</li>
 {% endfor %}
 </ul>
+{% if automobiliai.has_other_pages %}
+    <nav aria-label="Automobilių puslapiai">
+        <ul class="pagination justify-content-center">
+
+            {% if automobiliai.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ automobiliai.previous_page_number }}">← Ankstesnis</a>
+            </li>
+            {% endif %}
+
+            {% for i in automobiliai.paginator.page_range %}
+                {% if automobiliai.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% elif i > automobiliai.number|add:'-3' and i < automobiliai.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if automobiliai.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ automobiliai.next_page_number }}">Kitas →</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
 {% endblock %}
