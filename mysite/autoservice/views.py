@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .models import Service, Order, Car
 
@@ -29,4 +29,20 @@ def automobiliai(request):
 def car(request, car_id):
     car = Car.objects.get(pk=car_id)
     return render(request, 'autoservice/car.html', {'car': car})
+
+def uzsakymai(request):
+    orders = Order.objects.all()
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'autoservice/uzsakymai.html', context=context)
+
+def uzsakymas(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    order = Order.objects.prefetch_related('order_lines__service').get(pk=order_id)
+    return render(request, 'autoservice/uzsakymas.html', {'order': order})
+
+def paslaugos(request):
+    paslaugos = Service.objects.all().order_by('name')
+    return render(request, 'autoservice/paslaugos.html', {'paslaugos': paslaugos})
 

@@ -46,14 +46,31 @@
       </a>
 
       <nav id="navmenu" class="navmenu">
-        <ul>
-          <li><a href="{% url 'index' %}" class="active">Pagrindinis</a></li>
-          <li><a href="{% url 'index' %}#services">Paslaugos</a></li>  <!-- если сделаешь отдельную страницу -->
-          <li><a href="#kontaktai">Kontaktai</a></li>
-          <li><a href="#apie-mus">Apie mus</a></li>
-        </ul>
-        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-      </nav>
+    <ul>
+        <li>
+            <a href="{% url 'index' %}"
+               class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Pagrindinis</a>
+        <li>
+            <a href="{% url 'paslaugos' %}"
+       class="{% if request.resolver_match.url_name == 'paslaugos' %}active{% endif %}">Paslaugos</a>
+        </li>
+        <li>
+            <a href="{% url 'uzsakymai' %}"
+               class="{% if request.resolver_match.url_name == 'uzsakymai' %}active{% endif %}">Užsakymai</a>
+        </li>
+        <li>
+            <a href="{% url 'automobiliai' %}"
+               class="{% if request.resolver_match.url_name == 'automobiliai' %}active{% endif %}">Automobiliai</a>
+        </li>
+        <li>
+            <a href="#kontaktai">Kontaktai</a>
+        </li>
+        <li>
+            <a href="#apie-mus">Apie mus</a>
+        </li>
+    </ul>
+    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+</nav>
 
       <a class="btn-getstarted scrollto" href="#kontaktai">Užsiregistruoti</a>
 

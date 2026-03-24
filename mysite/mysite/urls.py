@@ -6,4 +6,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='/autoservice/', permanent=True)),
     path('autoservice/', include('autoservice.urls')),
+    path('order/', include('autoservice.urls')),
 ]

@@ -1,0 +1,19 @@
+{% extends "autoservice/base.html" %}
+
+{% block title %}Paslaugos{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1>Paslaugos</h1>
+    {% for p in paslaugos %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>{{ p.name }}</h5>
+                <p>Kaina: {{ p.price }} €</p>
+            </div>
+        </div>
+    {% empty %}
+        <p>Nėra paslaugų.</p>
+    {% endfor %}
+</div>
+{% endblock %}

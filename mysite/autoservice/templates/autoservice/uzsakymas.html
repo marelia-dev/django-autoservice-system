@@ -1,0 +1,101 @@
+{% extends "autoservice/base.html" %}
+{% load static %}
+
+{% block title %}Užsakymas №{{ order.id }}{% endblock %}
+
+{% block content %}
+
+<div class="container my-5" style="margin-top: 5rem !important; margin-bottom: 5rem !important;">
+    <div class="card shadow-lg border-0 rounded-4" style="overflow: hidden;">
+        <!-- Заголовок -->
+        <div class="card-header bg-primary text-white py-5" style="padding: 2rem 1.5rem !important;">
+            <h3 class="mb-0 text-center">Užsakymas №{{ order.id }}</h3>
+        </div>
+
+        <!-- Основная информация - с огромными отступами -->
+        <div class="card-body" style="padding: 4rem 3rem !important;">
+            <div class="row" style="margin-bottom: 4rem !important; row-gap: 3rem !important;">
+                <div class="col-md-6">
+                    <div style="margin-bottom: 3rem !important;">
+                        <strong style="display: block; font-size: 1.4rem; margin-bottom: 0.8rem;">Automobilis</strong>
+                        <p style="margin: 0; font-size: 1.3rem;">{{ order.car }}</p>
+                    </div>
+                    <div>
+                        <strong style="display: block; font-size: 1.4rem; margin-bottom: 0.8rem;">Klientas</strong>
+                        <p style="margin: 0; font-size: 1.3rem;">{{ order.car.client_name }}</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div style="margin-bottom: 3rem !important;">
+                        <strong style="display: block; font-size: 1.4rem; margin-bottom: 0.8rem;">Data</strong>
+                        <p style="margin: 0; font-size: 1.3rem;">{{ order.date|date:"Y-m-d H:i" }}</p>
+                    </div>
+                    <div>
+                        <strong style="display: block; font-size: 1.4rem; margin-bottom: 0.8rem;">Būsena</strong>
+                        <span class="badge
+                            {% if order.status == 'new' %}bg-primary
+                            {% elif order.status == 'in_progress' %}bg-info
+                            {% elif order.status == 'done' %}bg-success
+                            {% elif order.status == 'cancelled' %}bg-danger
+                            {% elif order.status == 'waiting' %}bg-warning text-dark
+                            {% else %}bg-secondary{% endif %}"
+                            style="font-size: 1.3rem; padding: 0.8rem 1.5rem;">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paslaugos -->
+            <h4 class="mb-5 pb-3 border-bottom" style="margin-bottom: 3rem !important;">Paslaugos</h4>
+
+            {% if order.order_lines.exists %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Paslauga</th>
+                            <th class="text-center">Kiekis</th>
+                            <th class="text-end">Kaina vnt.</th>
+                            <th class="text-end">Suma eilutėje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for line in order.order_lines.all %}
+                        <tr>
+                            <td>{{ line.service.name }}</td>
+                            <td class="text-center">{{ line.quantity }}</td>
+                            <td class="text-end">{{ line.service.price }} €</td>
+                            <td class="text-end fw-bold">{{ line.line_sum }} €</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light fw-bold">
+                        <tr>
+                            <td colspan="3" class="text-end pe-5 fs-5">Bendra užsakymo suma:</td>
+                            <td class="text-end fs-4">{{ order.total }} €</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center py-5 fs-5">
+                Šiam užsakymui dar nepriskirta jokių paslaugų.
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Кнопки -->
+        <div class="card-footer bg-light text-center py-4">
+            <a href="{% url 'uzsakymai' %}" class="btn btn-outline-secondary btn-lg me-3 px-4">
+                ← Grįžti į sąrašą
+            </a>
+            <a href="{% url 'index' %}" class="btn btn-outline-primary btn-lg px-4">
+                Į pagrindinį puslapį
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

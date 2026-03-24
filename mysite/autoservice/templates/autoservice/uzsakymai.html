@@ -1,0 +1,51 @@
+{% extends "autoservice/base.html" %}
+
+{% block title %}Užsakymai{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h2>Užsakymai</h2>
+
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Automobilis</th>
+                <th>Klientas</th>
+                <th>Data</th>
+                <th>Būsena</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.car }}</td>
+                <td>{{ order.car.client_name }}</td>
+                <td>{{ order.date|date:"Y-m-d H:i" }}</td>
+                <td>
+                    <span class="badge
+                        {% if order.status == 'new' %}bg-primary{% endif %}
+                        {% if order.status == 'in_progress' %}bg-info{% endif %}
+                        {% if order.status == 'done' %}bg-success{% endif %}
+                        {% if order.status == 'cancelled' %}bg-danger{% endif %}
+                        ">
+                        {{ order.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'order' order.id %}" class="btn btn-sm btn-outline-primary">Detaliau</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">Nėra užsakymų</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'index' %}" class="btn btn-primary mt-3">← Grįžti į pagrindinį</a>
+</div>
+
+{% endblock %}

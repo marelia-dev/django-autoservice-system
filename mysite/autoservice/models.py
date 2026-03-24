@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class Service(models.Model):
     # Autoserviso paslaugos
@@ -64,6 +65,7 @@ class Order(models.Model):
     def __str__(self):
         return f"Uzsakymas {self.car.license_plate} - {self.date}"
 
+    @property
     def total(self):
         return sum(line.line_sum() for line in self.order_lines.all())
 
