@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.views import generic
 
 from .models import Service, Order, Car
 
@@ -46,3 +47,11 @@ def paslaugos(request):
     paslaugos = Service.objects.all().order_by('name')
     return render(request, 'autoservice/paslaugos.html', {'paslaugos': paslaugos})
 
+class OrderListView(generic.ListView):
+    model = Order
+    template_name = 'autoservice/uzsakymai.html'
+    context_object_name = 'orders'
+    paginate_by = 3
+
+    def get_queryset(self):
+        return Order.objects.select_related('car').prefetch_related('order_lines__service')
