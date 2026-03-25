@@ -12,6 +12,8 @@ def index(request):
     num_orders = Order.objects.count()
     num_cars = Car.objects.count()
     num_orders_completed = Order.objects.filter(status='done').count()
+    num_visits = request.session.get('num_visits', 1)
+    request.session['num_visits'] = num_visits + 1
 
 
     context = {
@@ -19,6 +21,7 @@ def index(request):
         'num_orders': num_orders,
         'num_cars': num_cars,
         'num_orders_completed': num_orders_completed,
+        'num_visits': num_visits
     }
     return render(request, 'autoservice/index.html', context=context)
 
