@@ -21,6 +21,7 @@ class Car(models.Model):
     license_plate = models.CharField(max_length=50, verbose_name="Valstybinis nr.", unique=True)
     vin_code = models.CharField(max_length=17, verbose_name="Kebulo numeris", unique=True, blank=True, null=True)
     client_name = models.CharField(max_length=150, verbose_name="Klijentas")
+    cover = models.ImageField('Nuotrauka', upload_to="covers/", null=True, blank=True)
 
     class Meta:
         verbose_name = "Automobilis"

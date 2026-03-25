@@ -1,28 +1,65 @@
 {% extends "autoservice/base.html" %}
-
 {% load static %}
 
-{% block title %}Automobilis - {{ car.make }} {{ car.model }}{% endblock %}
+{% block title %}{{ car.make }} {{ car.model }} - AutoService{% endblock %}
 
 {% block content %}
-<h1>{{ car.make }} {{ car.model }}</h1>
-<dl>
-    <dt>Valdytojas / Savininkas</dt>
-    <dd>{{ car.client_name }}</dd>
 
- <dt>Gamintojas</dt>
-    <dd>{{ car.make }}</dd>
+<div class="container mt-5">
+    <div class="row">
 
-    <dt>Modelis</dt>
-    <dd>{{ car.model }}</dd>
+        <!-- Stulpelis is kaires, nuotrauka -->
+        <div class="col-md-5 mb-4">
+            {% if car.cover %}
+                <img src="{{ car.cover.url }}"
+                     class="img-fluid rounded shadow-sm"
+                     alt="{{ car.make }} {{ car.model }}"
+                     style="max-height: 420px; object-fit: cover; width: 100%;">
+            {% else %}
+                <img src="{% static 'autoservice/img/No_Image.jpg' %}"
+                     class="img-fluid rounded shadow-sm"
+                     alt="No photo"
+                     style="max-height: 420px; object-fit: cover; width: 100%;">
+            {% endif %}
+        </div>
 
-    <dt>Valstybinis numeris</dt>
-    <dd>{{ car.license_plate }}</dd>
+        <!-- is desines informacija -->
+        <div class="col-md-7">
+            <h1 class="mb-4">{{ car.make }} {{ car.model }}</h1>
 
-    <dt>VIN kodas</dt>
-    <dd>{{ car.vin_code }}</dd>
-    </dl>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <dl class="row">
 
-<a href="{% url 'automobiliai' %}">Grizti i sarasa</a>
+                        <dt class="col-sm-4">Valdytojas / Savininkas</dt>
+                        <dd class="col-sm-8">{{ car.client_name }}</dd>
+
+                        <dt class="col-sm-4">Gamintojas</dt>
+                        <dd class="col-sm-8">{{ car.make }}</dd>
+
+                        <dt class="col-sm-4">Modelis</dt>
+                        <dd class="col-sm-8">{{ car.model }}</dd>
+
+                        <dt class="col-sm-4">Valstybinis numeris</dt>
+                        <dd class="col-sm-8 fw-bold">{{ car.license_plate }}</dd>
+
+                        <dt class="col-sm-4">VIN kodas</dt>
+                        <dd class="col-sm-8 text-muted">{{ car.vin_code|default:"—" }}</dd>
+
+                    </dl>
+                </div>
+            </div>
+
+            <!-- apacioje mygtukas -->
+            <div class="mt-4">
+                <a href="{% url 'automobiliai' %}" class="btn btn-outline-secondary me-3">
+                    ← Grįžti į automobilų sąrašą
+                </a>
+
+                <!-- Veliau kazka galima prideti -->
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

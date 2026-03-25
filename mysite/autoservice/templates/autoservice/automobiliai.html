@@ -1,27 +1,52 @@
 {% extends "autoservice/base.html" %}
-
 {% load static %}
 
 {% block title %}Automobiliai{% endblock %}
 
 {% block content %}
 
-<h1>Automobiliai</h1>
-<p>Autoservise uzregistruoti automobiliai:</p>
-<ul>
-    {% for car in automobiliai %}
-    <li>
-        <a href="{% url 'car' car.id %}">{{car.make}} {{car.model}}
-        </a>
-    </li>
-    {% empty %}
-    <li>Nera automobiliu</li>
-{% endfor %}
-</ul>
-{% if automobiliai.has_other_pages %}
-    <nav aria-label="Automobilių puslapiai">
-        <ul class="pagination justify-content-center">
+<div class="container mt-5">
+    <h1 class="mb-4">Automobiliai</h1>
+    <p class="lead mb-4">Autoservise užregistruoti automobiliai: <strong>{{ automobiliai.paginator.count }}</strong></p>
 
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for car in automobiliai %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+
+                <!-- Automobilio nuotrauka -->
+                {% if car.cover %}
+                    <img src="{{ car.cover.url }}" class="card-img-top" alt="{{ car.make }} {{ car.model }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <img src="{% static 'autoservice/img/No_Image.jpg' %}" class="card-img-top" alt="No image" style="height: 200px; object-fit: cover;">
+                {% endif %}
+
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ car.make }} {{ car.model }}</h5>
+                    <p class="card-text text-muted mb-3">
+                        {{ car.license_plate }}<br>
+                        <small>Klientas: {{ car.client_name }}</small>
+                    </p>
+
+                    <a href="{% url 'car' car.id %}" class="btn btn-primary mt-auto">
+                        Detaliau →
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                Nėra užregistruotų automobilių.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginacija -->
+    {% if automobiliai.has_other_pages %}
+    <nav aria-label="Automobilių puslapiai" class="mt-5">
+        <ul class="pagination justify-content-center">
             {% if automobiliai.has_previous %}
             <li class="page-item">
                 <a class="page-link" href="?page={{ automobiliai.previous_page_number }}">← Ankstesnis</a>
@@ -30,9 +55,7 @@
 
             {% for i in automobiliai.paginator.page_range %}
                 {% if automobiliai.number == i %}
-                <li class="page-item active">
-                    <span class="page-link">{{ i }}</span>
-                </li>
+                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
                 {% elif i > automobiliai.number|add:'-3' and i < automobiliai.number|add:'3' %}
                 <li class="page-item">
                     <a class="page-link" href="?page={{ i }}">{{ i }}</a>
