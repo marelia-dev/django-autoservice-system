@@ -41,38 +41,38 @@
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
+      <!-- Logotipas -->
       <a href="{% url 'index' %}" class="logo d-flex align-items-center me-auto">
         <h1 class="sitename">AutoService</h1>
       </a>
 
-      <nav id="navmenu" class="navmenu">
-    <ul>
-        <li>
-            <a href="{% url 'index' %}"
-               class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Pagrindinis</a>
-        <li>
-            <a href="{% url 'paslaugos' %}"
-       class="{% if request.resolver_match.url_name == 'paslaugos' %}active{% endif %}">Paslaugos</a>
-        </li>
-        <li>
-            <a href="{% url 'uzsakymai' %}"
-               class="{% if request.resolver_match.url_name == 'uzsakymai' %}active{% endif %}">Užsakymai</a>
-        </li>
-        <li>
-            <a href="{% url 'automobiliai' %}"
-               class="{% if request.resolver_match.url_name == 'automobiliai' %}active{% endif %}">Automobiliai</a>
-        </li>
-        <li>
-            <a href="#kontaktai">Kontaktai</a>
-        </li>
-        <li>
-            <a href="#apie-mus">Apie mus</a>
-        </li>
-    </ul>
-    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-</nav>
+      <!-- Pagrindinis meniu -->
+<nav id="navmenu" class="navmenu">
+            <ul>
+                <li><a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Pagrindinis</a></li>
+                <li><a href="{% url 'paslaugos' %}" class="{% if request.resolver_match.url_name == 'paslaugos' %}active{% endif %}">Paslaugos</a></li>
+                <li><a href="{% url 'uzsakymai' %}" class="{% if request.resolver_match.url_name == 'uzsakymai' %}active{% endif %}">Užsakymai</a></li>
+                <li><a href="{% url 'automobiliai' %}" class="{% if request.resolver_match.url_name == 'automobiliai' %}active{% endif %}">Automobiliai</a></li>
+                <li><a href="#kontaktai">Kontaktai</a></li>
+                <li><a href="#apie-mus">Apie mus</a></li>
+            </ul>
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+      <!-- Paieska + mygtukas "Užsiregistruoti" -->
+<div class="d-flex align-items-center ms-auto gap-3">
+
+  <!-- Paieskos forma -->
+      <form action="{% url 'search' %}" method="get" class="d-flex">
+                <input name="query"
+                       class="form-control"
+                       type="text"
+                       placeholder="Ieškoti automobilio..."
+                       value="{{ request.GET.query|default:'' }}"
+                       style="width: 150px;">
+            </form>
 
       <a class="btn-getstarted scrollto" href="#kontaktai">Užsiregistruoti</a>
+    </div>
 
     </div>
   </header><!-- End Header -->

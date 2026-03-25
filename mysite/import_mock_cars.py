@@ -1,5 +1,3 @@
-# import_mock_cars.py
-# -*- coding: utf-8 -*-
 
 import os
 import sys

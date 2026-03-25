@@ -1,0 +1,58 @@
+{% extends "autoservice/base.html" %}
+
+{% block title %}Paieškos rezultatai{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Paieškos rezultatai pagal "{{ query }}"</h1>
+    <p>Rasta automobilių: <strong>{{ automobiliai.paginator.count }}</strong></p>
+
+    {% if automobiliai %}
+        <ul class="list-group mb-4">
+            {% for car in automobiliai %}
+            <li class="list-group-item">
+                <a href="{% url 'car' car.id %}">
+                    {{ car.make }} {{ car.model }} — {{ car.license_plate }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Paieskos paginacija -->
+        {% if automobiliai.has_other_pages %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if automobiliai.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?query={{ query }}&page={{ automobiliai.previous_page_number }}">← Ankstesnis</a>
+                </li>
+                {% endif %}
+
+                {% for i in automobiliai.paginator.page_range %}
+                    {% if automobiliai.number == i %}
+                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?query={{ query }}&page={{ i }}">{{ i }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if automobiliai.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?query={{ query }}&page={{ automobiliai.next_page_number }}">Kitas →</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+    {% else %}
+        <div class="alert alert-info">
+            Pagal užklausą "{{ query }}" nieko neradome.
+        </div>
+    {% endif %}
+
+    <a href="{% url 'automobiliai' %}" class="btn btn-primary mt-4">← Visi automobiliai</a>
+</div>
+{% endblock %}
