@@ -23,6 +23,8 @@ ALLOWED_HOSTS = ['192.168.1.230', '127.0.0.1', 'localhost']
 
 INSTALLED_APPS = [
     'autoservice',
+    'crispy_forms',
+    'crispy_bootstrap5',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -123,3 +125,9 @@ MEDIA_URL = '/media/'
 # ==================== STATIC FILES ====================
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'

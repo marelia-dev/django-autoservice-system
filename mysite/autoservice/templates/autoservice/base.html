@@ -62,17 +62,40 @@
 <div class="d-flex align-items-center ms-auto gap-3">
 
   <!-- Paieskos forma -->
-      <form action="{% url 'search' %}" method="get" class="d-flex">
-                <input name="query"
-                       class="form-control"
-                       type="text"
-                       placeholder="Ieškoti automobilio..."
-                       value="{{ request.GET.query|default:'' }}"
-                       style="width: 150px;">
-            </form>
+  <form action="{% url 'search' %}" method="get" class="d-flex">
+    <input name="query"
+           class="form-control"
+           type="text"
+           placeholder="Ieškoti automobilio..."
+           value="{{ request.GET.query|default:'' }}"
+           style="width: 150px;">
+  </form>
+  {% if user.is_authenticated %}
+  <!-- Kai prisijunge vartotojas -->
+  <div class="d-flex align-items-center gap-3">
+    <a href="#" class="nav-link d-flex align-items-center">
+      <svg class="bi bi-person me-1" width="1.6em" height="1.6em" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4z"/>
+      </svg>
+      <span>{{ user.get_username }}</span>
+    </a>
 
-      <a class="btn-getstarted scrollto" href="#kontaktai">Užsiregistruoti</a>
-    </div>
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-danger btn-sm">Atsijungti</button>
+    </form>
+  </div>
+
+  {% else %}
+  <!-- Kai vartuotojas neisejo -->
+  <a href="{% url 'login' %}" class="btn btn-outline-primary">
+    Prisijungti
+  </a>
+
+
+  {% endif %}
+
+</div>
 
     </div>
   </header><!-- End Header -->
