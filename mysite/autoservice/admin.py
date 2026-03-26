@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Car, Service, Order, OrderLine
 from django.utils.html import format_html
+from django.utils import timezone
 
 
 class OrderLineInline(admin.TabularInline):
@@ -75,6 +76,17 @@ class OrderAdmin(admin.ModelAdmin):
             color,
             obj.get_status_display()
         )
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+
+        overdue_ids = Order.objects.filter(
+            due_back__lt=timezone.now().date()
+        ).values_list('pk', flat=True)
+
+        extra_context['overdue_order_ids'] = list(overdue_ids)
+
+        return super().changelist_view(request, extra_context=extra_context)
 
 @admin.register(Car)
 class CarAdmin(admin.ModelAdmin):

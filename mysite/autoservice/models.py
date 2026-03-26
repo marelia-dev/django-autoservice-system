@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from tinymce.models import HTMLField
 
 class Service(models.Model):
     # Autoserviso paslaugos
@@ -23,6 +24,7 @@ class Car(models.Model):
     vin_code = models.CharField(max_length=17, verbose_name="Kebulo numeris", unique=True, blank=True, null=True)
     client_name = models.CharField(max_length=150, verbose_name="Klijentas")
     cover = models.ImageField('Nuotrauka', upload_to="covers/", null=True, blank=True)
+    description = HTMLField(verbose_name="Aprasymas", max_length=3000, default="")
 
     class Meta:
         verbose_name = "Automobilis"

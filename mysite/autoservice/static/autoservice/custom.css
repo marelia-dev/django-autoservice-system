@@ -11,3 +11,12 @@
     display: flex;
     align-items: center;
 }
+
+tr.overdue {
+    background-color: #ffe6e6 !important;
+}
+
+tr.overdue td {
+    color: #c62828;
+    font-weight: 500;
+}

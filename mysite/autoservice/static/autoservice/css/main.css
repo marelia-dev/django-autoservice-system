@@ -3575,3 +3575,12 @@ section,
   color: color-mix(in srgb, var(--default-color), transparent 60%);
   font-size: 14px;
 }
+
+tr.overdue {
+    background-color: #ffe6e6 !important;
+}
+
+tr.overdue td {
+    color: #c62828;
+    font-weight: 500;
+}

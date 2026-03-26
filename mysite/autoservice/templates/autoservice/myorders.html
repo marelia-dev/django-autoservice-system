@@ -20,7 +20,7 @@
             </thead>
             <tbody>
                 {% for order in orders %}
-                <tr>
+                <tr class="{% if order.is_overdue %}table-danger{% endif %}">
                     <td>{{ order.car.make }} {{ order.car.model }}<br>
                         <small class="text-muted">{{ order.car.license_plate }}</small>
                     </td>
@@ -33,7 +33,15 @@
                             {{ order.get_status_display }}
                         </span>
                     </td>
-                    <td>{{ order.due_back|default:"—" }}</td>
+                    <td>
+                        {% if order.due_back %}
+                            <span class="{% if order.is_overdue %}text-danger fw-bold{% endif %}">
+                                {{ order.due_back }}
+                            </span>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
                     <td class="text-end">
                         <a href="{% url 'order' order.id %}" class="btn btn-primary btn-sm">
                             Detaliau →
