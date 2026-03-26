@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class Service(models.Model):
     # Autoserviso paslaugos
@@ -34,7 +35,17 @@ class Car(models.Model):
 class Order(models.Model):
     # Uzsakymas i autoservisa
     car = models.ForeignKey(Car, on_delete=models.PROTECT, verbose_name="Automobilis")
-    date = models.DateTimeField(verbose_name="Uzsakymo data ir laikas")
+    date = models.DateTimeField(default=timezone.now, verbose_name="Uzsakymo data ir laikas")
+    reader = models.ForeignKey(to=User, on_delete=models.SET_NULL, verbose_name="Vartotojas", null=True, blank=True)
+    due_back = models.DateField(verbose_name="Grazinimo terminas", null=True, blank=True)
+
+    def is_overdue(self):
+        if self.due_back and timezone.now().date() > self.due_back:
+            return True
+        return False
+
+
+    STATUS_CHOICES = ()
 
     # Naujas laukas: statusas
     STATUS_CHOICES = (
