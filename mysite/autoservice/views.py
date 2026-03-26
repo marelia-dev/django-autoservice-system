@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Service, Order, Car
 
@@ -25,7 +26,14 @@ def index(request):
     }
     return render(request, 'autoservice/index.html', context=context)
 
+class MyOrderInstanceListView(LoginRequiredMixin, generic.ListView):
+    model = Order
+    template_name = 'autoservice/myorders.html'
+    context_object_name = 'orders'
+    paginate_by = 10
 
+    def get_queryset(self):
+        return Order.objects.filter(reader=self.request.user)
 
 def car(request, car_id):
     car = Car.objects.get(pk=car_id)
@@ -55,6 +63,8 @@ class OrderListView(generic.ListView):
 
     def get_queryset(self):
         return Order.objects.select_related('car').prefetch_related('order_lines__service')
+
+
 
 # ==================== AUTOMOBILIAI ====================
 def automobiliai(request):

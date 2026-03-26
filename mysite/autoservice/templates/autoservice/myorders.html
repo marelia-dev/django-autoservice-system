@@ -1,0 +1,53 @@
+{% extends "autoservice/base.html" %}
+
+{% block title %}Mano užsakymai{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Mano užsakymai</h1>
+
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Automobilis</th>
+                    <th>Data</th>
+                    <th>Būsena</th>
+                    <th>Grąžinimo terminas</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.car.make }} {{ order.car.model }}<br>
+                        <small class="text-muted">{{ order.car.license_plate }}</small>
+                    </td>
+                    <td>{{ order.date|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        <span class="badge
+                            {% if order.status == 'done' %}bg-success
+                            {% elif order.status == 'in_progress' %}bg-info
+                            {% else %}bg-secondary{% endif %}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ order.due_back|default:"—" }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'order' order.id %}" class="btn btn-primary btn-sm">
+                            Detaliau →
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center py-5">
+        Jūs dar neturite jokių užsakymų.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

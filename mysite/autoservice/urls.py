@@ -10,4 +10,5 @@ urlpatterns = [
     path('uzsakymas/<int:order_id>/', views.uzsakymas, name='order'),
     path('paslaugos/', views.paslaugos, name='paslaugos'),
     path('search/', views.search, name='search'),
+    path('myorders/', views.MyOrderInstanceListView.as_view(), name='my_orders'),
 ]
