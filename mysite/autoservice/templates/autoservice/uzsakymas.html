@@ -84,16 +84,34 @@
                 Šiam užsakymui dar nepriskirta jokių paslaugų.
             </div>
             {% endif %}
-            <h2>Komentarai:</h2>
+            <h2>Komentarai / Atsiliepimai</h2>
             <br/>
+
             {% if order.reviews.all %}
-            {% for review in order.reviews.all %}
-            <p><strong>{{ review.reviewer }}</strong>, <em>{{ review.date_created }}</em></p>
-            <p>{{ review.content }}</p>
-            <hr>
-            {% endfor %}
+                {% for review in order.reviews.all %}
+                    <div class="mb-4 p-3 border rounded">
+                        <strong>{{ review.reviewer.username }}</strong>
+                        <small class="text-muted">— {{ review.date_created|date:"Y-m-d H:i" }}</small>
+                        <p class="mt-2 mb-0">{{ review.content }}</p>
+                    </div>
+                {% endfor %}
             {% else %}
-            <p>Komentarų nėra</p>
+                <p class="text-muted">Šiam užsakymui atsiliepimų dar nėra.</p>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <h3 class="mt-5">Palikite atsiliepimą</h3>
+
+                <form method="post" class="mt-3">
+                    {% csrf_token %}
+                    {% load crispy_forms_tags %}
+                    {{ form|crispy:"bootstrap5" }}
+                    <button type="submit" class="btn btn-primary mt-3">Paskelbti atsiliepimą</button>
+                </form>
+            {% else %}
+                <div class="alert alert-warning mt-4">
+                    Norėdami palikti atsiliepimą, <a href="{% url 'login' %}">prisijunkite</a>.
+                </div>
             {% endif %}
         </div>
 

@@ -1,12 +1,13 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, reverse
 from django.views import generic
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
+from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
-
 from .models import Service, Order, Car
+from .forms import OrderReviewForm
 
 # ==================== INDEX ====================
 def index(request):
@@ -48,24 +49,60 @@ def uzsakymai(request):
     }
     return render(request, 'autoservice/uzsakymai.html', context=context)
 
-def uzsakymas(request, order_id):
-    order = get_object_or_404(Order, pk=order_id)
-    order = Order.objects.prefetch_related('order_lines__service').get(pk=order_id)
-    return render(request, 'autoservice/uzsakymas.html', {'order': order})
+# def uzsakymas(request, order_id):
+#     order = get_object_or_404(Order, pk=order_id)
+#     order = Order.objects.prefetch_related('order_lines__service').get(pk=order_id)
+#     return render(request, 'autoservice/uzsakymas.html', {'order': order})
 
 def paslaugos(request):
     paslaugos = Service.objects.all().order_by('name')
     return render(request, 'autoservice/paslaugos.html', {'paslaugos': paslaugos})
 
-class OrderListView(generic.ListView):
+class OrderDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
+    model = Order
+    template_name = 'autoservice/uzsakymas.html'
+    context_object_name = 'order'
+    form_class = OrderReviewForm
+
+    def get_queryset(self):
+        return Order.objects.prefetch_related('order_lines__service', 'reviews')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.get_form()
+        return context
+
+    # nurodome, kur atsidursime komentaro sėkmės atveju.
+    def get_success_url(self):
+        return reverse("order", kwargs={"pk": self.object.id})
+
+    # standartinis post metodo perrašymas, naudojant FormMixin, galite kopijuoti tiesiai į savo projektą.
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    # štai čia nurodome, kad knyga bus būtent ta, po kuria komentuojame, o vartotojas bus tas, kuris yra prisijungęs.
+    def form_valid(self, form):
+        review = form.save(commit=False)
+        review.order = self.object
+        review.reviewer = self.request.user
+        review.save()
+        return super().form_valid(form)
+
+
+class OrderListView(FormMixin, generic.ListView):
     model = Order
     template_name = 'autoservice/uzsakymai.html'
     context_object_name = 'orders'
+    form_class = OrderReviewForm
     paginate_by = 3
 
     def get_queryset(self):
         return Order.objects.select_related('car').prefetch_related('order_lines__service')
-
 
 
 # ==================== AUTOMOBILIAI ====================

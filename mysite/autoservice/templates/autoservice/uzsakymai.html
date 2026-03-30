@@ -34,7 +34,7 @@
                     </span>
                 </td>
                 <td>
-                    <a href="{% url 'order' order.id %}" class="btn btn-sm btn-outline-primary">Detaliau →</a>
+                    <a href="{% url 'order' pk=order.id %}" class="btn btn-sm btn-outline-primary">Detaliau →</a>
                 </td>
             </tr>
             {% empty %}
