@@ -3,6 +3,8 @@ from django.views import generic
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
 
 from .models import Service, Order, Car
 
@@ -102,3 +104,9 @@ def search(request):
         'automobiliai': paged_results,
     }
     return render(request, 'autoservice/search.html', context=context)
+
+class SignUpView(generic.CreateView):
+    form_class = UserCreationForm
+    template_name = 'autoservice/signup.html'
+    success_url = reverse_lazy('login')
+

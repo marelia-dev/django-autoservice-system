@@ -7,7 +7,7 @@
 
 <div class="container my-5" style="margin-top: 5rem !important; margin-bottom: 5rem !important;">
     <div class="card shadow-lg border-0 rounded-4" style="overflow: hidden;">
-        <!-- Заголовок -->
+        <!-- Pavadinimas -->
         <div class="card-header bg-primary text-white py-5" style="padding: 2rem 1.5rem !important;">
             <h3 class="mb-0 text-center">Užsakymas №{{ order.id }}</h3>
         </div>
@@ -83,6 +83,17 @@
             <div class="alert alert-info text-center py-5 fs-5">
                 Šiam užsakymui dar nepriskirta jokių paslaugų.
             </div>
+            {% endif %}
+            <h2>Komentarai:</h2>
+            <br/>
+            {% if order.reviews.all %}
+            {% for review in order.reviews.all %}
+            <p><strong>{{ review.reviewer }}</strong>, <em>{{ review.date_created }}</em></p>
+            <p>{{ review.content }}</p>
+            <hr>
+            {% endfor %}
+            {% else %}
+            <p>Komentarų nėra</p>
             {% endif %}
         </div>
 

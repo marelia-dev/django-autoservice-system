@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Car, Service, Order, OrderLine
+from .models import Car, Service, Order, OrderLine, OrderReview
 from django.utils.html import format_html
 from django.utils import timezone
 
@@ -15,6 +15,10 @@ class OrderLineInline(admin.TabularInline):
         sum_value = obj.line_sum()
         return f"{sum_value:.2f}" if sum_value > 0 else "-"
 
+class OrderReviewInline(admin.TabularInline):
+    model = OrderReview
+    extra = 0
+
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -23,7 +27,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_editable = ('reader', 'due_back',)
     autocomplete_fields = ('reader',)
     search_fields = ('car__license_plate', 'car__client_name', 'reader__username')
-    inlines = [OrderLineInline]
+    inlines = [OrderLineInline, OrderReviewInline]
 
     @admin.display(description="Vartotojas", ordering='reader__username')
     def reader_display(self, obj):
@@ -125,3 +129,7 @@ class OrderLineAdmin(admin.ModelAdmin):
         sum_value = obj.line_sum()
         return f"{sum_value:.2f}" if sum_value > 0 else "0"
 
+
+@admin.register(OrderReview)
+class OrderReviewAdmin(admin.ModelAdmin):
+    list_display = ('order', 'date_created', 'reviewer', 'content')

@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from tinymce.models import HTMLField
 
+
 class Service(models.Model):
     # Autoserviso paslaugos
     name = models.CharField(max_length=150, verbose_name="Paslaugos pavadinimas")
@@ -101,4 +102,18 @@ class OrderLine(models.Model):
         if self.service and self.quantity:
             return self.service.price * self.quantity
         return 0
+
+
+class OrderReview(models.Model):
+    order = models.ForeignKey(to=Order, on_delete=models.SET_NULL, verbose_name="Uzsakymas",
+                              null=True, blank=True, related_name="reviews")
+    reviewer = models.ForeignKey(to=User, on_delete=models.SET_NULL, verbose_name="Reviewer",
+                                 null=True, blank=True)
+    date_created = models.DateTimeField(verbose_name="Date Created", auto_now_add=True)
+    content = models.TextField(verbose_name="Content", max_length=2000)
+
+    class Meta:
+        verbose_name = "Uzsakymo atsiliepimas"
+        verbose_name_plural = "Uzsakymo atsiliepimai"
+        ordering = ["-date_created"]
 
