@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Car, Service, Order, OrderLine, OrderReview
+from .models import Car, Service, Order, OrderLine, OrderReview, CustomUser
 from django.utils.html import format_html
 from django.utils import timezone
+from django.contrib.auth.admin import UserAdmin
 
 
 class OrderLineInline(admin.TabularInline):
@@ -133,3 +134,30 @@ class OrderLineAdmin(admin.ModelAdmin):
 @admin.register(OrderReview)
 class OrderReviewAdmin(admin.ModelAdmin):
     list_display = ('order', 'date_created', 'reviewer', 'content')
+
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+    list_display = ('username', 'email', 'first_name', 'last_name', 'photo_tag', 'is_staff')
+    list_filter = ('is_staff', 'is_superuser', 'is_active')
+    search_fields = ('username', 'email', 'first_name', 'last_name')
+
+    def photo_tag(self, obj):
+        if obj.photo:
+            return format_html('<img src="{}" width="50" height="50" style="border-radius: 50%;" />', obj.photo.url)
+        return "—"
+
+    photo_tag.short_description = 'Nuotrauka'
+
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Personaline informacija', {'fields': ('first_name', 'last_name', 'email', 'photo')}),
+        ('Teises', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Svarbios datos', {'fields': ('last_login', 'date_joined')}),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'password1', 'password2', 'email', 'photo'),
+        }),
+    )

@@ -26,7 +26,7 @@
 
                     <!-- Форма обновления профиля -->
                     <h5 class="mb-3">Atnaujinti profilį</h5>
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form|crispy:"bootstrap5" }}
 

@@ -1,8 +1,27 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from tinymce.models import HTMLField
+from django.conf import settings
 
+
+class CustomUser(AbstractUser):
+    """Kastomizuotas vartotojas AutoService projektui"""
+
+    photo = models.ImageField(
+        upload_to="profile_pics/",
+        null=True,
+        blank=True,
+        verbose_name="Profilio nuotrauka"
+    )
+
+    class Meta:
+        verbose_name = "Vartotojas"
+        verbose_name_plural = "Vartotojai"
+        db_table = 'auth_user'
+
+    def __str__(self):
+        return self.username
 
 class Service(models.Model):
     # Autoserviso paslaugos
@@ -39,7 +58,7 @@ class Order(models.Model):
     # Uzsakymas i autoservisa
     car = models.ForeignKey(Car, on_delete=models.PROTECT, verbose_name="Automobilis")
     date = models.DateTimeField(default=timezone.now, verbose_name="Uzsakymo data ir laikas")
-    reader = models.ForeignKey(to=User, on_delete=models.SET_NULL, verbose_name="Vartotojas", null=True, blank=True)
+    reader = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name="Vartotojas", null=True, blank=True)
     due_back = models.DateField(verbose_name="Grazinimo terminas", null=True, blank=True)
 
     def is_overdue(self):
@@ -107,7 +126,7 @@ class OrderLine(models.Model):
 class OrderReview(models.Model):
     order = models.ForeignKey(to=Order, on_delete=models.SET_NULL, verbose_name="Uzsakymas",
                               null=True, blank=True, related_name="reviews")
-    reviewer = models.ForeignKey(to=User, on_delete=models.SET_NULL, verbose_name="Reviewer",
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name="Reviewer",
                                  null=True, blank=True)
     date_created = models.DateTimeField(verbose_name="Date Created", auto_now_add=True)
     content = models.TextField(verbose_name="Content", max_length=2000)
