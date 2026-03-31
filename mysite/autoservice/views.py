@@ -4,10 +4,11 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
 from .models import Service, Order, Car
-from .forms import OrderReviewForm
+from .forms import OrderReviewForm, UserChangeForm
 
 # ==================== INDEX ====================
 def index(request):
@@ -147,3 +148,10 @@ class SignUpView(generic.CreateView):
     template_name = 'autoservice/signup.html'
     success_url = reverse_lazy('login')
 
+class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
+    form_class = UserChangeForm
+    template_name = "autoservice/profile.html"
+    success_url = reverse_lazy('profile')
+
+    def get_object(self, queryset=None):
+        return self.request.user

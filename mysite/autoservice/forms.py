@@ -1,5 +1,7 @@
 from .models import OrderReview
 from django import forms
+from django.contrib.auth.models import User
+
 
 class OrderReviewForm(forms.ModelForm):
     class Meta:
@@ -15,3 +17,8 @@ class OrderReviewForm(forms.ModelForm):
         labels = {
             'content': 'Atsiliepimo tekstas',
         }
+
+class UserChangeForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
