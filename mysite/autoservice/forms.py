@@ -24,10 +24,21 @@ class UserChangeForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'email']
 
-class CustomUserChangeForm(forms.ModelForm):
+class CustomUserChangeForm(UserChangeForm):
+    password = None
+
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email',]
+        fields = ['first_name', 'last_name', 'email', 'photo']
+        widgets = {
+            'photo': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'first_name': 'Vardas',
+            'last_name': 'Pavardė',
+            'email': 'El. paštas',
+            'photo': 'Profilio nuotrauka',
+        }
 
 class CustomUserCreateForm(UserCreationForm):
     class Meta:

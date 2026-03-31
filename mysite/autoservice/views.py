@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.views.generic import UpdateView
 from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
 from .models import Service, Order, Car, CustomUser
@@ -148,10 +149,16 @@ class SignUpView(generic.CreateView):
     template_name = 'autoservice/signup.html'
     success_url = reverse_lazy('login')
 
-class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = CustomUser
     form_class = CustomUserChangeForm
-    template_name = "autoservice/profile.html"
+    template_name = 'autoservice/profile.html'
     success_url = reverse_lazy('profile')
 
     def get_object(self, queryset=None):
         return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        return context

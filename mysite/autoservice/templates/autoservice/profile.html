@@ -14,8 +14,20 @@
                     <h3 class="mb-0">Mano profilis</h3>
                 </div>
 
-                <div class="card-body p-4">
-                    <!-- Информация о пользователе -->
+                <div class="card-body p-4 text-center">
+                    <!-- Показ текущего фото -->
+                    {% if user.photo %}
+                        <img src="{{ user.photo.url }}"
+                             alt="Profilio nuotrauka"
+                             class="rounded-circle mb-4"
+                             style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #0d6efd;">
+                    {% else %}
+                        <div class="mb-4">
+                            <i class="bi bi-person-circle" style="font-size: 120px; color: #ccc;"></i>
+                        </div>
+                    {% endif %}
+
+                    <!-- Информация -->
                     <h5 class="mb-3">Vartotojo informacija</h5>
                     <p><strong>Vartotojo vardas:</strong> {{ user.username }}</p>
                     <p><strong>Vardas:</strong> {{ user.first_name|default:"—" }}</p>
@@ -24,7 +36,7 @@
 
                     <hr class="my-4">
 
-                    <!-- Форма обновления профиля -->
+                    <!-- Форма обновления -->
                     <h5 class="mb-3">Atnaujinti profilį</h5>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
