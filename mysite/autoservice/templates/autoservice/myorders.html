@@ -50,6 +50,9 @@
                         <a href="{% url 'order_update' order.pk %}" class="btn btn-warning btn-sm">
                             Redaguoti
                         </a>
+                        <a href="{% url 'order_delete' order.pk %}" class="btn btn-danger btn-sm">
+                            Istrinti
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}

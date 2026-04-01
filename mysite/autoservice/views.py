@@ -195,3 +195,18 @@ class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateVie
         context = super().get_context_data(**kwargs)
         context['title'] = f'Užsakymo №{self.object.id} redagavimas'
         return context
+
+class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    model = Order
+    template_name = 'autoservice/order_delete.html'
+    success_url = reverse_lazy('my_orders')
+    context_object_name = 'order'
+
+    def test_func(self):
+        order = self.get_object()
+        return order.reader == self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Ištrinti užsakymą №{self.object.id}'
+        return context

@@ -1,0 +1,46 @@
+{% extends "autoservice/base.html" %}
+{% load static %}
+
+{% block title %}Ištrinti užsakymą №{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white text-center py-3">
+                    <h3 class="mb-0">Ištrinti užsakymą №{{ order.id }}</h3>
+                </div>
+
+                <div class="card-body p-5 text-center">
+                    <h5 class="mb-4 text-danger">
+                        Ar tikrai norite ištrinti šį užsakymą?
+                    </h5>
+
+                    <p class="lead mb-4">
+                        <strong>Automobilis:</strong> {{ order.car }}<br>
+                        <strong>Data:</strong> {{ order.date|date:"Y-m-d H:i" }}
+                    </p>
+
+                    <div class="alert alert-warning">
+                        Šis veiksmas yra negrįžtamas. Užsakymas bus ištrintas visam laikui.
+                    </div>
+
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg px-5">
+                            Taip, ištrinti užsakymą
+                        </button>
+                    </form>
+
+                    <a href="{% url 'my_orders' %}" class="btn btn-outline-secondary btn-lg px-5 ms-3">
+                        Atšaukti
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
