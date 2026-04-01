@@ -1,15 +1,17 @@
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, get_object_or_404, reverse
 from django.views import generic
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.views.generic import UpdateView
 from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
 from .models import Service, Order, Car, CustomUser
-from .forms import OrderReviewForm, UserChangeForm, CustomUserChangeForm, CustomUserCreateForm
+from .forms import OrderReviewForm, UserChangeForm, CustomUserChangeForm, CustomUserCreateForm, OrderCreateForm
+
 
 # ==================== INDEX ====================
 def index(request):
@@ -161,4 +163,20 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
+        return context
+
+class OrderCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Order
+    form_class = OrderCreateForm
+    template_name = 'autoservice/order_create.html'
+    success_url = reverse_lazy('my_orders')
+
+    def form_valid(self, form):
+        form.instance.reader = self.request.user
+        form.instance.status = 'new'
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Naujas užsakymas'
         return context

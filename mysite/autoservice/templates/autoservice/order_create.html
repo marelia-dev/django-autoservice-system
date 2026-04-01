@@ -1,0 +1,39 @@
+{% extends "autoservice/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Naujas užsakymas{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h3 class="mb-0">Naujas užsakymas</h3>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy:"bootstrap5" }}
+
+                        <button type="submit" class="btn btn-primary w-100 mt-4 py-3">
+                            Sukurti užsakymą
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ИСПРАВЛЕННАЯ СТРОКА -->
+            <div class="text-center mt-4">
+                <a href="{% url 'my_orders' %}" class="btn btn-outline-secondary">
+                    ← Grįžti į mano užsakymus
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

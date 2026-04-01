@@ -1,4 +1,4 @@
-from .models import OrderReview, CustomUser
+from .models import OrderReview, CustomUser, Order
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -44,3 +44,15 @@ class CustomUserCreateForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'password1', 'password2']
+
+class OrderCreateForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['car', 'due_back']
+        widgets = {'due_back': forms.DateInput(attrs={'type':'date',
+                                                      'class':'form-control',})}
+        labels = {
+            'car': 'Automobilis',
+            'due_back': 'Terminas (iki kada)',
+        }
+
