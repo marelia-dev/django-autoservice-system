@@ -1,5 +1,5 @@
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import render, get_object_or_404, reverse
+from django.shortcuts import render, get_object_or_404, reverse, redirect
 from django.views import generic
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -10,7 +10,10 @@ from django.views.generic import UpdateView
 from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
 from .models import Service, Order, Car, CustomUser
-from .forms import OrderReviewForm, UserChangeForm, CustomUserChangeForm, CustomUserCreateForm, OrderCreateForm, OrderUpdateForm
+from .forms import (OrderReviewForm, UserChangeForm, CustomUserChangeForm, CustomUserCreateForm,
+                    OrderCreateForm, OrderUpdateForm, OrderLineFormSet)
+from django.contrib import messages
+
 
 
 # ==================== INDEX ====================
@@ -73,30 +76,44 @@ class OrderDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = self.get_form()
+        context['form'] = self.get_form()                    # форма отзыва
+        context['line_formset'] = OrderLineFormSet(instance=self.object)  # форма строк
         return context
 
-    # nurodome, kur atsidursime komentaro sėkmės atveju.
-    def get_success_url(self):
-        return reverse("order", kwargs={"pk": self.object.id})
-
-    # standartinis post metodo perrašymas, naudojant FormMixin, galite kopijuoti tiesiai į savo projektą.
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
 
-    # štai čia nurodome, kad knyga bus būtent ta, po kuria komentuojame, o vartotojas bus tas, kuris yra prisijungęs.
+        if any(key.startswith('order_lines') for key in request.POST.keys()):
+            formset = OrderLineFormSet(request.POST, instance=self.object)
+
+            if formset.is_valid():
+                formset.save()
+                messages.success(request, "Paslaugos sėkmingai išsaugotos.")
+                self.object.refresh_from_db()
+                self.object = Order.objects.prefetch_related('order_lines__service').get(pk=self.object.pk)
+                return redirect('order', pk=self.object.pk)
+            else:
+                print("Formset errors:", formset.errors)   # для отладки
+                context = self.get_context_data()
+                context['line_formset'] = formset
+                return self.render_to_response(context)
+
+        # Форма отзыва
+        if 'content' in request.POST:
+            form = self.get_form()
+            if form.is_valid():
+                return self.form_valid(form)
+            else:
+                return self.form_invalid(form)
+
+        return redirect('order', pk=self.object.pk)
+
     def form_valid(self, form):
         review = form.save(commit=False)
         review.order = self.object
         review.reviewer = self.request.user
         review.save()
         return super().form_valid(form)
-
 
 class OrderListView(FormMixin, generic.ListView):
     model = Order
@@ -210,3 +227,32 @@ class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteVie
         context = super().get_context_data(**kwargs)
         context['title'] = f'Ištrinti užsakymą №{self.object.id}'
         return context
+
+class OrderLinesUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.View):
+    template_name = 'autoservice/order_lines_update.html'
+
+    def test_func(self):
+        order = Order.objects.get(pk=self.kwargs['pk'])
+        return order.reader == self.request.user
+
+    def get(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+        formset = OrderLineFormSet(instance=order)
+        return render(request, self.template_name, {
+            'order': order,
+            'formset': formset
+        })
+
+    def post(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+        formset = OrderLineFormSet(request.POST, instance=order)
+
+        if formset.is_valid():
+            formset.save()
+            messages.success(request, "Paslaugos sėkmingai atnaujintos.")
+            return redirect('order', pk=order.pk)
+
+        return render(request, self.template_name, {
+            'order': order,
+            'formset': formset
+        })

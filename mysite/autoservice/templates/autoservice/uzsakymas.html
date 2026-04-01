@@ -1,5 +1,6 @@
 {% extends "autoservice/base.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block title %}Užsakymas №{{ order.id }}{% endblock %}
 
@@ -7,12 +8,13 @@
 
 <div class="container my-5" style="margin-top: 5rem !important; margin-bottom: 5rem !important;">
     <div class="card shadow-lg border-0 rounded-4" style="overflow: hidden;">
-        <!-- Pavadinimas -->
+
+        <!-- Заголовок -->
         <div class="card-header bg-primary text-white py-5" style="padding: 2rem 1.5rem !important;">
             <h3 class="mb-0 text-center">Užsakymas №{{ order.id }}</h3>
         </div>
 
-        <!-- Pagrindine info -->
+        <!-- Основная информация -->
         <div class="card-body" style="padding: 4rem 3rem !important;">
             <div class="row" style="margin-bottom: 4rem !important; row-gap: 3rem !important;">
                 <div class="col-md-6">
@@ -47,12 +49,50 @@
                 </div>
             </div>
 
-            <!-- Paslaugos -->
-            <h4 class="mb-5 pb-3 border-bottom" style="margin-bottom: 3rem !important;">Paslaugos</h4>
+            <!-- === PASLAUGOS (Управление строками) === -->
+        <h4 class="mb-4">Paslaugos</h4>
 
+            <form method="post" class="mb-5">
+                {% csrf_token %}
+                {{ line_formset.management_form }}
+
+                {% for form in line_formset %}
+                <div class="row mb-3 p-3 border rounded bg-light align-items-end">
+
+                    <!-- Только одно скрытое поле ID -->
+                    {{ form.id }}
+
+                    <div class="col-md-6">
+                        {{ form.service|as_crispy_field }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.quantity|as_crispy_field }}
+                    </div>
+
+                    <!-- Один чекбокс для удаления -->
+                    <div class="col-md-3 d-flex align-items-center">
+                        {% if form.instance.pk %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                   name="{{ line_formset.prefix }}-{{ forloop.counter0 }}-DELETE"
+                                   id="delete_{{ forloop.counter0 }}">
+                            <label class="form-check-label text-danger fw-bold"
+                                   for="delete_{{ forloop.counter0 }}">
+                                Ištrinti
+                            </label>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="btn btn-primary">Išsaugoti paslaugas</button>
+            </form>
+
+            <!-- Таблица услуг (для просмотра) -->
             {% if order.order_lines.exists %}
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover align-middle">
+            <div class="table-responsive mb-5">
+                <table class="table table-bordered table-striped table-hover">
                     <thead class="table-dark">
                         <tr>
                             <th>Paslauga</th>
@@ -73,17 +113,16 @@
                     </tbody>
                     <tfoot class="table-light fw-bold">
                         <tr>
-                            <td colspan="3" class="text-end pe-5 fs-5">Bendra užsakymo suma:</td>
-                            <td class="text-end fs-4">{{ order.total }} €</td>
+                            <td colspan="3" class="text-end">Bendra suma:</td>
+                            <td class="text-end">{{ order.total }} €</td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
             {% else %}
-            <div class="alert alert-info text-center py-5 fs-5">
-                Šiam užsakymui dar nepriskirta jokių paslaugų.
-            </div>
+            <p class="text-muted">Šiam užsakymui dar nepriskirta jokių paslaugų.</p>
             {% endif %}
+
             <!-- Komentarai / Atsiliepimai -->
             <h2 class="mt-5 mb-4">Komentarai / Atsiliepimai</h2>
 
@@ -91,8 +130,6 @@
                 {% for review in order.reviews.all %}
                 <div class="mb-4 p-4 border rounded-3 bg-light">
                     <div class="d-flex align-items-start">
-
-                        <!-- Фото пользователя -->
                         <div class="me-3 flex-shrink-0">
                             {% if review.reviewer.photo %}
                                 <img src="{{ review.reviewer.photo.url }}"
@@ -100,15 +137,13 @@
                                      class="rounded-circle shadow-sm"
                                      style="width: 55px; height: 55px; object-fit: cover; border: 2px solid #0d6efd;">
                             {% else %}
-                                <div style="width: 55px; height: 55px; background-color: #e9ecef;
-                                            border-radius: 50%; display: flex; align-items: center;
-                                            justify-content: center; border: 2px solid #0d6efd;">
+                                <div style="width: 55px; height: 55px; background-color: #e9ecef; border-radius: 50%;
+                                            display: flex; align-items: center; justify-content: center; border: 2px solid #0d6efd;">
                                     <i class="bi bi-person-circle" style="font-size: 28px; color: #6c757d;"></i>
                                 </div>
                             {% endif %}
                         </div>
 
-                        <!-- Информация об отзыве -->
                         <div class="flex-grow-1">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <strong class="fs-5">{{ review.reviewer.username }}</strong>
@@ -123,7 +158,9 @@
                 <p class="text-muted fst-italic">Šiam užsakymui atsiliepimų dar nėra.</p>
             {% endif %}
 
-        <!-- Кнопки -->
+        </div>
+
+        <!-- Кнопки внизу -->
         <div class="card-footer bg-light text-center py-4">
             <a href="{% url 'uzsakymai' %}" class="btn btn-outline-secondary btn-lg me-3 px-4">
                 ← Grįžti į sąrašą
