@@ -14,35 +14,51 @@
                     <h3 class="mb-0">Mano profilis</h3>
                 </div>
 
-                <div class="card-body p-4 text-center">
-                    <!-- Показ текущего фото -->
-                    {% if user.photo %}
-                        <img src="{{ user.photo.url }}"
-                             alt="Profilio nuotrauka"
-                             class="rounded-circle mb-4"
-                             style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #0d6efd;">
-                    {% else %}
-                        <div class="mb-4">
-                            <i class="bi bi-person-circle" style="font-size: 120px; color: #ccc;"></i>
-                        </div>
-                    {% endif %}
+                <div class="card-body p-5">
 
-                    <!-- Информация -->
-                    <h5 class="mb-3">Vartotojo informacija</h5>
-                    <p><strong>Vartotojo vardas:</strong> {{ user.username }}</p>
-                    <p><strong>Vardas:</strong> {{ user.first_name|default:"—" }}</p>
-                    <p><strong>Pavardė:</strong> {{ user.last_name|default:"—" }}</p>
-                    <p><strong>El. paštas:</strong> {{ user.email|default:"—" }}</p>
+                    <!-- Квадратное фото профиля -->
+                    <div class="text-center mb-5">
+                        {% if user.photo %}
+                            <img src="{{ user.photo.url }}"
+                                 alt="Profilio nuotrauka"
+                                 class="shadow-sm"
+                                 style="width: 160px; height: 160px; object-fit: cover; border: 5px solid #0d6efd; border-radius: 12px;">
+                        {% else %}
+                            <div style="width: 160px; height: 160px; margin: 0 auto; background-color: #f8f9fa;
+                                        border: 5px solid #0d6efd; border-radius: 12px; display: flex;
+                                        align-items: center; justify-content: center;">
+                                <i class="bi bi-person-circle" style="font-size: 90px; color: #ced4da;"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Информация о пользователе -->
+                    <h5 class="text-center text-primary mb-4">Vartotojo informacija</h5>
+
+                    <div class="row mb-5 gx-3">
+                        <div class="col-5 fw-bold text-end">Vartotojo vardas:</div>
+                        <div class="col-7">{{ user.username }}</div>
+
+                        <div class="col-5 fw-bold text-end">Vardas:</div>
+                        <div class="col-7">{{ user.first_name|default:"—" }}</div>
+
+                        <div class="col-5 fw-bold text-end">Pavardė:</div>
+                        <div class="col-7">{{ user.last_name|default:"—" }}</div>
+
+                        <div class="col-5 fw-bold text-end">El. paštas:</div>
+                        <div class="col-7">{{ user.email|default:"—" }}</div>
+                    </div>
 
                     <hr class="my-4">
 
-                    <!-- Форма обновления -->
-                    <h5 class="mb-3">Atnaujinti profilį</h5>
+                    <!-- Форма обновления профиля -->
+                    <h5 class="text-center text-primary mb-4">Atnaujinti profilį</h5>
+
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form|crispy:"bootstrap5" }}
 
-                        <button type="submit" class="btn btn-primary w-100 mt-3">
+                        <button type="submit" class="btn btn-primary w-100 mt-4 py-3">
                             Atnaujinti profilį
                         </button>
                     </form>
@@ -50,10 +66,11 @@
             </div>
 
             <div class="text-center mt-4">
-                <a href="{% url 'index' %}" class="btn btn-outline-secondary">
+                <a href="{% url 'index' %}" class="btn btn-outline-secondary px-5">
                     ← Grįžti į pagrindinį
                 </a>
             </div>
+
         </div>
     </div>
 </div>
