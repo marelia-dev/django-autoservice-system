@@ -10,7 +10,7 @@ from django.views.generic import UpdateView
 from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
 from .models import Service, Order, Car, CustomUser
-from .forms import OrderReviewForm, UserChangeForm, CustomUserChangeForm, CustomUserCreateForm, OrderCreateForm
+from .forms import OrderReviewForm, UserChangeForm, CustomUserChangeForm, CustomUserCreateForm, OrderCreateForm, OrderUpdateForm
 
 
 # ==================== INDEX ====================
@@ -179,4 +179,19 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Naujas užsakymas'
+        return context
+
+class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
+    model = Order
+    template_name = 'autoservice/order_update.html'
+    form_class = OrderUpdateForm
+    success_url = reverse_lazy('my_orders')
+
+    def test_func(self):
+        order = self.get_object()
+        return order.reader == self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Užsakymo №{self.object.id} redagavimas'
         return context

@@ -47,6 +47,9 @@
                         <a href="{% url 'order' order.id %}" class="btn btn-primary btn-sm">
                             Detaliau →
                         </a>
+                        <a href="{% url 'order_update' order.pk %}" class="btn btn-warning btn-sm">
+                            Redaguoti
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}

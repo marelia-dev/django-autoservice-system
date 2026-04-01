@@ -56,3 +56,10 @@ class OrderCreateForm(forms.ModelForm):
             'due_back': 'Terminas (iki kada)',
         }
 
+class OrderUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['car', 'due_back', 'status']
+        widgets = {
+            'due_back': forms.DateInput(attrs={'type': 'date'}),
+        }
