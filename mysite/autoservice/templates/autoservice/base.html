@@ -55,6 +55,34 @@
             <li><a href="{% url 'automobiliai' %}" class="{% if request.resolver_match.url_name == 'automobiliai' %}active{% endif %}">{% trans "Cars" %}</a></li>
             <li><a href="#kontaktai">{% trans "Contact" %}</a></li>
             <li><a href="#apie-mus">{% trans "About Us" %}</a></li>
+          <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#"
+       id="languageDropdown" role="button" data-bs-toggle="dropdown">
+        {% get_current_language as LANGUAGE_CODE %}
+        {% if LANGUAGE_CODE == 'lt' %}LT
+        {% elif LANGUAGE_CODE == 'ru' %}RU
+        {% else %}EN{% endif %}
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end">
+        <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+
+            {% get_available_languages as LANGUAGES %}
+            {% for lang in LANGUAGES %}
+            <li>
+                <button type="submit"
+                        name="language"
+                        value="{{ lang.0 }}"
+                        class="dropdown-item {% if lang.0 == LANGUAGE_CODE %}active{% endif %}">
+                    {{ lang.1 }}
+                </button>
+            </li>
+            {% endfor %}
+        </form>
+    </ul>
+</li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>

@@ -38,8 +38,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -99,13 +99,17 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
-LANGUAGES = (
-    ('en-us', _('English')),
-    ('lt', _('Lithuanian')),
-    ('ru', _('Russian')),
-    )
+LANGUAGES = [
+    ('en', 'English'),
+    ('lt', 'Lietuvių'),
+    ('ru', 'Русский'),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 # TIME_ZONE = 'UTC'
 TIME_ZONE = "Europe/Vilnius"
@@ -114,6 +118,9 @@ TIME_ZONE = "Europe/Vilnius"
 USE_TZ = True
 
 USE_I18N = True
+USE_L10N = True
+
+
 
 
 
