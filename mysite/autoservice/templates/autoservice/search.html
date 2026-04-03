@@ -1,11 +1,12 @@
 {% extends "autoservice/base.html" %}
+{% load i18n %}
 
-{% block title %}Paieškos rezultatai{% endblock %}
+{% block title %}Search results{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h1>Paieškos rezultatai pagal "{{ query }}"</h1>
-    <p>Rasta automobilių: <strong>{{ automobiliai.paginator.count }}</strong></p>
+    <h1>{% trans "Search results for" %} "{{ query }}"</h1>
+    <p>{% trans "Found cars" %}: <strong>{{ automobiliai.paginator.count }}</strong></p>
 
     {% if automobiliai %}
         <ul class="list-group mb-4">
@@ -18,13 +19,15 @@
             {% endfor %}
         </ul>
 
-        <!-- Paieskos paginacija -->
+        <!-- Search pagination -->
         {% if automobiliai.has_other_pages %}
         <nav>
             <ul class="pagination justify-content-center">
                 {% if automobiliai.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?query={{ query }}&page={{ automobiliai.previous_page_number }}">← Ankstesnis</a>
+                    <a class="page-link" href="?query={{ query }}&page={{ automobiliai.previous_page_number }}">
+                        ← {% trans "Previous" %}
+                    </a>
                 </li>
                 {% endif %}
 
@@ -40,7 +43,9 @@
 
                 {% if automobiliai.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?query={{ query }}&page={{ automobiliai.next_page_number }}">Kitas →</a>
+                    <a class="page-link" href="?query={{ query }}&page={{ automobiliai.next_page_number }}">
+                        {% trans "Next" %} →
+                    </a>
                 </li>
                 {% endif %}
             </ul>
@@ -49,10 +54,12 @@
 
     {% else %}
         <div class="alert alert-info">
-            Pagal užklausą "{{ query }}" nieko neradome.
+            {% trans "No cars found for query" %} "{{ query }}".
         </div>
     {% endif %}
 
-    <a href="{% url 'automobiliai' %}" class="btn btn-primary mt-4">← Visi automobiliai</a>
+    <a href="{% url 'automobiliai' %}" class="btn btn-primary mt-4">
+        ← {% trans "All cars" %}
+    </a>
 </div>
 {% endblock %}

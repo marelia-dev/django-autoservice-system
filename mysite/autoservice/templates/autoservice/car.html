@@ -1,5 +1,6 @@
 {% extends "autoservice/base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}{{ car.make }} {{ car.model }} - AutoService{% endblock %}
 
@@ -9,7 +10,7 @@
 
     <div class="row">
 
-        {# Kairysis stulpelis - automobilio nuotrauka #}
+        {# Left column - car photo #}
         <div class="col-md-5 mb-5">
             {% if car.cover %}
                 <img src="{{ car.cover.url }}"
@@ -19,31 +20,31 @@
             {% else %}
                 <img src="{% static 'autoservice/img/No_Image.jpg' %}"
                      class="img-fluid rounded shadow-sm"
-                     alt="Nuotrauka nėra"
+                     alt="{% trans 'No photo' %}"
                      style="max-height: 420px; object-fit: cover; width: 100%;">
             {% endif %}
         </div>
 
-        {# Dešinysis stulpelis - pagrindinė informacija #}
+        {# Right column - main information #}
         <div class="col-md-7">
             <h1 class="mb-4">{{ car.make }} {{ car.model }}</h1>
 
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <dl class="row mb-0">
-                        <dt class="col-sm-4">Valdytojas / Savininkas</dt>
+                        <dt class="col-sm-4">{% trans "Owner" %}</dt>
                         <dd class="col-sm-8">{{ car.client_name }}</dd>
 
-                        <dt class="col-sm-4">Gamintojas</dt>
+                        <dt class="col-sm-4">{% trans "Manufacturer" %}</dt>
                         <dd class="col-sm-8">{{ car.make }}</dd>
 
-                        <dt class="col-sm-4">Modelis</dt>
+                        <dt class="col-sm-4">{% trans "Model" %}</dt>
                         <dd class="col-sm-8">{{ car.model }}</dd>
 
-                        <dt class="col-sm-4">Valstybinis numeris</dt>
+                        <dt class="col-sm-4">{% trans "License plate" %}</dt>
                         <dd class="col-sm-8 fw-bold">{{ car.license_plate }}</dd>
 
-                        <dt class="col-sm-4">VIN kodas</dt>
+                        <dt class="col-sm-4">{% trans "VIN code" %}</dt>
                         <dd class="col-sm-8 text-muted">{{ car.vin_code|default:"—" }}</dd>
                     </dl>
                 </div>
@@ -51,28 +52,28 @@
         </div>
     </div>
 
-    {# Aprašymo blokas - po nuotrauka ir pagrindine informacija, centre #}
+    {# Description block #}
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="card shadow-sm">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0">Aprašymas</h5>
+                    <h5 class="mb-0">{% trans "Description" %}</h5>
                 </div>
                 <div class="card-body">
                     {% if car.description %}
                         <p class="lead">{{ car.description|safe }}</p>
                     {% else %}
-                        <p class="text-muted">Aprašymas dar neįkeltas.</p>
+                        <p class="text-muted">{% trans "Description not added yet." %}</p>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
 
-    {# Mygtukas grįžti atgal #}
+    {# Back button #}
     <div class="text-center mt-5">
         <a href="{% url 'automobiliai' %}" class="btn btn-outline-secondary btn-lg">
-            ← Grįžti į automobilų sąrašą
+            ← {% trans "Back to car list" %}
         </a>
     </div>
 

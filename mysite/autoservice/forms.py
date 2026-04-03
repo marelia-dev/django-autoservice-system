@@ -1,9 +1,9 @@
-from .models import OrderReview, CustomUser, Order, OrderLine, Service
 from django import forms
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.forms import inlineformset_factory
+from django.utils.translation import gettext_lazy as _
 
+from .models import OrderReview, CustomUser, Order, OrderLine, Service
 
 
 class OrderReviewForm(forms.ModelForm):
@@ -14,17 +14,19 @@ class OrderReviewForm(forms.ModelForm):
             'content': forms.Textarea(attrs={
                 'rows': 5,
                 'class': 'form-control',
-                'placeholder': 'Parašykite savo atsiliepimą čia...',
+                'placeholder': _('Write your review here...'),
             })
         }
         labels = {
-            'content': 'Atsiliepimo tekstas',
+            'content': _('Review text'),
         }
+
 
 class UserChangeForm(forms.ModelForm):
     class Meta:
-        model = User
+        model = CustomUser   # лучше использовать CustomUser
         fields = ['first_name', 'last_name', 'email']
+
 
 class CustomUserChangeForm(UserChangeForm):
     password = None
@@ -36,16 +38,18 @@ class CustomUserChangeForm(UserChangeForm):
             'photo': forms.FileInput(attrs={'class': 'form-control'}),
         }
         labels = {
-            'first_name': 'Vardas',
-            'last_name': 'Pavardė',
-            'email': 'El. paštas',
-            'photo': 'Profilio nuotrauka',
+            'first_name': _('First name'),
+            'last_name': _('Last name'),
+            'email': _('Email'),
+            'photo': _('Profile photo'),
         }
+
 
 class CustomUserCreateForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'password1', 'password2']
+
 
 class OrderCreateForm(forms.ModelForm):
     class Meta:
@@ -61,8 +65,8 @@ class OrderCreateForm(forms.ModelForm):
             ),
         }
         labels = {
-            'car': 'Automobilis',
-            'due_back': 'Terminas (data)',
+            'car': _('Car'),
+            'due_back': _('Due date'),
         }
         input_formats = ['%Y-%m-%d', '%d-%m-%Y', '%m-%d-%Y']
 
@@ -82,6 +86,7 @@ class OrderUpdateForm(forms.ModelForm):
         }
         input_formats = ['%Y-%m-%d', '%d-%m-%Y', '%m-%d-%Y']
 
+
 class OrderLineForm(forms.ModelForm):
     class Meta:
         model = OrderLine
@@ -94,8 +99,8 @@ class OrderLineForm(forms.ModelForm):
             }),
         }
         labels = {
-            'service': 'Paslauga',
-            'quantity': 'Kiekis',
+            'service': _('Service'),
+            'quantity': _('Quantity'),
         }
 
 

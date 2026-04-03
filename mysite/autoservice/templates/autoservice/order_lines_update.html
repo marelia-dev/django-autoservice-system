@@ -1,33 +1,34 @@
 {% extends "autoservice/base.html" %}
 {% load crispy_forms_tags %}
+{% load i18n %}
 
-{% block title %}Paslaugos užsakymui №{{ order.id }}{% endblock %}
+{% block title %}Services for order №{{ order.id }}{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
     <div class="card shadow">
         <div class="card-header bg-primary text-white">
-            <h3>Paslaugos užsakymui №{{ order.id }}</h3>
+            <h3>{% trans "Services for order" %} №{{ order.id }}</h3>
             <p class="mb-0">{{ order.car }}</p>
         </div>
-        
+
         <div class="card-body">
             <form method="post">
                 {% csrf_token %}
                 {{ formset.management_form }}
-                
+
                 {% for form in formset %}
                 <div class="border p-3 mb-3 rounded">
                     {{ form|crispy }}
                     {% if form.instance.pk %}
                     <input type="checkbox" name="{{ formset.prefix }}-{{ forloop.counter0 }}-DELETE" id="DELETE_{{ forloop.counter0 }}">
-                    <label for="DELETE_{{ forloop.counter0 }}">Ištrinti šią paslaugą</label>
+                    <label for="DELETE_{{ forloop.counter0 }}">{% trans "Delete this service" %}</label>
                     {% endif %}
                 </div>
                 {% endfor %}
 
-                <button type="submit" class="btn btn-primary">Išsaugoti paslaugas</button>
-                <a href="{% url 'order' order.pk %}" class="btn btn-secondary">Atšaukti</a>
+                <button type="submit" class="btn btn-primary">{% trans "Save services" %}</button>
+                <a href="{% url 'order' order.pk %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
             </form>
         </div>
     </div>

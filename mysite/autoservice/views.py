@@ -1,41 +1,41 @@
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import render, get_object_or_404, reverse, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from django.views.generic import UpdateView
-from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
-from .models import Service, Order, Car, CustomUser
-from .forms import (OrderReviewForm, UserChangeForm, CustomUserChangeForm, CustomUserCreateForm,
-                    OrderCreateForm, OrderUpdateForm, OrderLineFormSet)
 from django.contrib import messages
+from django.utils.translation import gettext as _
 
+from .models import Service, Order, Car, CustomUser
+from .forms import (
+    OrderReviewForm, CustomUserChangeForm, CustomUserCreateForm,
+    OrderCreateForm, OrderUpdateForm, OrderLineFormSet
+)
 
 
 # ==================== INDEX ====================
 def index(request):
-
     num_services = Service.objects.count()
     num_orders = Order.objects.count()
     num_cars = Car.objects.count()
     num_orders_completed = Order.objects.filter(status='done').count()
+
     num_visits = request.session.get('num_visits', 1)
     request.session['num_visits'] = num_visits + 1
-
 
     context = {
         'num_services': num_services,
         'num_orders': num_orders,
         'num_cars': num_cars,
         'num_orders_completed': num_orders_completed,
-        'num_visits': num_visits
+        'num_visits': num_visits,
     }
     return render(request, 'autoservice/index.html', context=context)
 
+
+# ==================== MY ORDERS ====================
 class MyOrderInstanceListView(LoginRequiredMixin, generic.ListView):
     model = Order
     template_name = 'autoservice/myorders.html'
@@ -45,97 +45,52 @@ class MyOrderInstanceListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         return Order.objects.filter(reader=self.request.user)
 
-def car(request, car_id):
-    car = Car.objects.get(pk=car_id)
-    return render(request, 'autoservice/car.html', {'car': car})
 
+# ==================== CAR DETAIL ====================
+def car(request, car_id):
+    car_obj = get_object_or_404(Car, pk=car_id)
+    return render(request, 'autoservice/car.html', {'car': car_obj})
+
+
+# ==================== ALL ORDERS ====================
 def uzsakymai(request):
     orders = Order.objects.all()
-    context = {
-        'orders': orders,
-    }
+    context = {'orders': orders}
     return render(request, 'autoservice/uzsakymai.html', context=context)
 
-# def uzsakymas(request, order_id):
-#     order = get_object_or_404(Order, pk=order_id)
-#     order = Order.objects.prefetch_related('order_lines__service').get(pk=order_id)
-#     return render(request, 'autoservice/uzsakymas.html', {'order': order})
 
+# ==================== SERVICES ====================
 def paslaugos(request):
     paslaugos = Service.objects.all().order_by('name')
     return render(request, 'autoservice/paslaugos.html', {'paslaugos': paslaugos})
 
-class OrderDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
+
+# ==================== ORDER DETAIL ====================
+class OrderDetailView(LoginRequiredMixin, generic.DetailView):
     model = Order
     template_name = 'autoservice/uzsakymas.html'
     context_object_name = 'order'
-    form_class = OrderReviewForm
 
     def get_queryset(self):
         return Order.objects.prefetch_related('order_lines__service', 'reviews')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = self.get_form()                    # форма отзыва
-        context['line_formset'] = OrderLineFormSet(instance=self.object)  # форма строк
+        context['form'] = OrderReviewForm()
+        context['line_formset'] = OrderLineFormSet(instance=self.object)
         return context
 
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
 
-        if any(key.startswith('order_lines') for key in request.POST.keys()):
-            formset = OrderLineFormSet(request.POST, instance=self.object)
-
-            if formset.is_valid():
-                formset.save()
-                messages.success(request, "Paslaugos sėkmingai išsaugotos.")
-                self.object.refresh_from_db()
-                self.object = Order.objects.prefetch_related('order_lines__service').get(pk=self.object.pk)
-                return redirect('order', pk=self.object.pk)
-            else:
-                print("Formset errors:", formset.errors)   # для отладки
-                context = self.get_context_data()
-                context['line_formset'] = formset
-                return self.render_to_response(context)
-
-        # Форма отзыва
-        if 'content' in request.POST:
-            form = self.get_form()
-            if form.is_valid():
-                return self.form_valid(form)
-            else:
-                return self.form_invalid(form)
-
-        return redirect('order', pk=self.object.pk)
-
-    def form_valid(self, form):
-        review = form.save(commit=False)
-        review.order = self.object
-        review.reviewer = self.request.user
-        review.save()
-        return super().form_valid(form)
-
-class OrderListView(FormMixin, generic.ListView):
-    model = Order
-    template_name = 'autoservice/uzsakymai.html'
-    context_object_name = 'orders'
-    form_class = OrderReviewForm
-    paginate_by = 3
-
-    def get_queryset(self):
-        return Order.objects.select_related('car').prefetch_related('order_lines__service')
-
-
-# ==================== AUTOMOBILIAI ====================
+# ==================== CARS LIST ====================
 def automobiliai(request):
     automobiliai_list = Car.objects.all().order_by('make', 'model')
     paginator = Paginator(automobiliai_list, 20)
     page_number = request.GET.get('page')
     automobiliai = paginator.get_page(page_number)
-    context = {
-        'automobiliai': automobiliai,
-    }
+
+    context = {'automobiliai': automobiliai}
     return render(request, 'autoservice/automobiliai.html', context=context)
+
 
 # ==================== SEARCH ====================
 def search(request):
@@ -143,16 +98,15 @@ def search(request):
 
     if query:
         results = Car.objects.filter(
-        Q(make__icontains=query) |
-        Q(model__icontains=query) |
-        Q(license_plate__icontains=query) |
-        Q(vin_code__icontains=query) |
-        Q(client_name__icontains=query)
+            Q(make__icontains=query) |
+            Q(model__icontains=query) |
+            Q(license_plate__icontains=query) |
+            Q(vin_code__icontains=query) |
+            Q(client_name__icontains=query)
         ).order_by('make', 'model')
     else:
         results = Car.objects.none()
 
-# Paginacija
     paginator = Paginator(results, 20)
     page_number = request.GET.get('page')
     paged_results = paginator.get_page(page_number)
@@ -163,12 +117,15 @@ def search(request):
     }
     return render(request, 'autoservice/search.html', context=context)
 
+
+# ==================== AUTH & PROFILE ====================
 class SignUpView(generic.CreateView):
     form_class = CustomUserCreateForm
     template_name = 'autoservice/signup.html'
     success_url = reverse_lazy('login')
 
-class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+
+class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = CustomUser
     form_class = CustomUserChangeForm
     template_name = 'autoservice/profile.html'
@@ -177,11 +134,8 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         return self.request.user
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['user'] = self.request.user
-        return context
 
+# ==================== ORDER VIEWS ====================
 class OrderCreateView(LoginRequiredMixin, generic.CreateView):
     model = Order
     form_class = OrderCreateForm
@@ -193,46 +147,33 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
         form.instance.status = 'new'
         return super().form_valid(form)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Naujas užsakymas'
-        return context
 
 class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
     model = Order
-    template_name = 'autoservice/order_update.html'
     form_class = OrderUpdateForm
+    template_name = 'autoservice/order_update.html'
     success_url = reverse_lazy('my_orders')
 
     def test_func(self):
         order = self.get_object()
         return order.reader == self.request.user
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = f'Užsakymo №{self.object.id} redagavimas'
-        return context
 
 class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
     model = Order
     template_name = 'autoservice/order_delete.html'
     success_url = reverse_lazy('my_orders')
-    context_object_name = 'order'
 
     def test_func(self):
         order = self.get_object()
         return order.reader == self.request.user
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = f'Ištrinti užsakymą №{self.object.id}'
-        return context
 
 class OrderLinesUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.View):
     template_name = 'autoservice/order_lines_update.html'
 
     def test_func(self):
-        order = Order.objects.get(pk=self.kwargs['pk'])
+        order = get_object_or_404(Order, pk=self.kwargs['pk'])
         return order.reader == self.request.user
 
     def get(self, request, pk):
@@ -249,7 +190,7 @@ class OrderLinesUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.View
 
         if formset.is_valid():
             formset.save()
-            messages.success(request, "Paslaugos sėkmingai atnaujintos.")
+            messages.success(request, _("Services have been successfully saved."))
             return redirect('order', pk=order.pk)
 
         return render(request, self.template_name, {

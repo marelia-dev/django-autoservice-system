@@ -1,12 +1,11 @@
 from django.urls import path
-
 from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
     path('automobiliai/', views.automobiliai, name='automobiliai'),
     path('car/<int:car_id>/', views.car, name='car'),
-    path('uzsakymai/', views.OrderListView.as_view(), name='uzsakymai'),
+    path('uzsakymai/', views.uzsakymai, name='uzsakymai'),           # ← используем функцию
     path('uzsakymas/<int:pk>/', views.OrderDetailView.as_view(), name='order'),
     path('paslaugos/', views.paslaugos, name='paslaugos'),
     path('search/', views.search, name='search'),

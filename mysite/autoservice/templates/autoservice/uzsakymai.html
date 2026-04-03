@@ -1,19 +1,20 @@
 {% extends "autoservice/base.html" %}
+{% load i18n %}
 
-{% block title %}Užsakymai{% endblock %}
+{% block title %}Orders{% endblock %}
 
 {% block content %}
 
 <div class="container mt-5">
-    <h2 class="mb-4">Užsakymai</h2>
+    <h2 class="mb-4">{% trans "Orders" %}</h2>
 
     <table class="table table-hover table-striped">
         <thead class="table-dark">
             <tr>
-                <th>Automobilis</th>
-                <th>Klientas</th>
-                <th>Data</th>
-                <th>Būsena</th>
+                <th>{% trans "Car" %}</th>
+                <th>{% trans "Client" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Status" %}</th>
                 <th></th>
             </tr>
         </thead>
@@ -34,24 +35,28 @@
                     </span>
                 </td>
                 <td>
-                    <a href="{% url 'order' pk=order.id %}" class="btn btn-sm btn-outline-primary">Detaliau →</a>
+                    <a href="{% url 'order' pk=order.id %}" class="btn btn-sm btn-outline-primary">
+                        {% trans "Details" %} →
+                    </a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" class="text-center py-4">Nėra užsakymų</td>
+                <td colspan="5" class="text-center py-4">{% trans "No orders" %}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <!-- Пагинация -->
+    <!-- Pagination -->
     {% if is_paginated %}
     <nav aria-label="Page navigation" class="mt-4">
         <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">← Ankstesnis</a>
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                    ← {% trans "Previous" %}
+                </a>
             </li>
             {% endif %}
 
@@ -67,7 +72,9 @@
 
             {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Kitas →</a>
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                    {% trans "Next" %} →
+                </a>
             </li>
             {% endif %}
         </ul>
@@ -75,7 +82,9 @@
     {% endif %}
 
     <div class="text-center mt-4">
-        <a href="{% url 'index' %}" class="btn btn-primary">← Grįžti į pagrindinį</a>
+        <a href="{% url 'index' %}" class="btn btn-primary">
+            ← {% trans "Back to home" %}
+        </a>
     </div>
 </div>
 

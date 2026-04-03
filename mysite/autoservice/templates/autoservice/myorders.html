@@ -1,21 +1,24 @@
 {% extends "autoservice/base.html" %}
+{% load i18n %}
 
-{% block title %}Mano užsakymai{% endblock %}
+{% block title %}My orders{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="mb-4">Mano užsakymai</h1>
-    <a href="{% url 'order_create' %}" class="btn btn-success">+ Naujas užsakymas</a>
+    <h1 class="mb-4">{% trans "My orders" %}</h1>
+    <a href="{% url 'order_create' %}" class="btn btn-success">
+        + {% trans "New order" %}
+    </a>
 
     {% if orders %}
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead class="table-dark">
                 <tr>
-                    <th>Automobilis</th>
-                    <th>Data</th>
-                    <th>Būsena</th>
-                    <th>Grąžinimo terminas</th>
+                    <th>{% trans "Car" %}</th>
+                    <th>{% trans "Date" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th>{% trans "Due back" %}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -45,13 +48,13 @@
                     </td>
                     <td class="text-end">
                         <a href="{% url 'order' order.id %}" class="btn btn-primary btn-sm">
-                            Detaliau →
+                            {% trans "Details" %} →
                         </a>
                         <a href="{% url 'order_update' order.pk %}" class="btn btn-warning btn-sm">
-                            Redaguoti
+                            {% trans "Edit" %}
                         </a>
                         <a href="{% url 'order_delete' order.pk %}" class="btn btn-danger btn-sm">
-                            Istrinti
+                            {% trans "Delete" %}
                         </a>
                     </td>
                 </tr>
@@ -61,7 +64,7 @@
     </div>
     {% else %}
     <div class="alert alert-info text-center py-5">
-        Jūs dar neturite jokių užsakymų.
+        {% trans "You don't have any orders yet." %}
     </div>
     {% endif %}
 </div>

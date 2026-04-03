@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="lt">
@@ -7,7 +8,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>{% block title %}AutoService – Profesionalus autoservisas{% endblock %}</title>
+  <title>{% block title %}AutoService – Professional Car Service{% endblock %}</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -29,7 +30,6 @@
 
   <!-- Main CSS File -->
   <link href="{% static 'autoservice/css/main.css' %}" rel="stylesheet">
-
   <link href="{% static 'autoservice/custom.css' %}" rel="stylesheet">
 
   {% block extra_css %}{% endblock %}
@@ -41,46 +41,45 @@
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
-      <!-- Logotipas -->
+      <!-- Logo -->
       <a href="{% url 'index' %}" class="logo d-flex align-items-center me-auto">
         <h1 class="sitename">AutoService</h1>
       </a>
 
-      <!-- Pagrindinis meniu -->
-<nav id="navmenu" class="navmenu">
-    <ul>
-        <li><a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Pagrindinis</a></li>
-        <li><a href="{% url 'paslaugos' %}" class="{% if request.resolver_match.url_name == 'paslaugos' %}active{% endif %}">Paslaugos</a></li>
-        <li><a href="{% url 'uzsakymai' %}" class="{% if request.resolver_match.url_name == 'uzsakymai' %}active{% endif %}">Užsakymai</a></li>
-        <li><a href="{% url 'automobiliai' %}" class="{% if request.resolver_match.url_name == 'automobiliai' %}active{% endif %}">Automobiliai</a></li>
-        <li><a href="#kontaktai">Kontaktai</a></li>
-        <li><a href="#apie-mus">Apie mus</a></li>
-    </ul>
-    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-</nav>
-      <!-- Paieska + mygtukas "Užsiregistruoti" -->
-<div class="d-flex align-items-center ms-auto gap-3">
+      <!-- Main Navigation -->
+      <nav id="navmenu" class="navmenu">
+        <ul>
+            <li><a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">{% trans "Home" %}</a></li>
+            <li><a href="{% url 'paslaugos' %}" class="{% if request.resolver_match.url_name == 'paslaugos' %}active{% endif %}">{% trans "Services" %}</a></li>
+            <li><a href="{% url 'uzsakymai' %}" class="{% if request.resolver_match.url_name == 'uzsakymai' %}active{% endif %}">{% trans "Orders" %}</a></li>
+            <li><a href="{% url 'automobiliai' %}" class="{% if request.resolver_match.url_name == 'automobiliai' %}active{% endif %}">{% trans "Cars" %}</a></li>
+            <li><a href="#kontaktai">{% trans "Contact" %}</a></li>
+            <li><a href="#apie-mus">{% trans "About Us" %}</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
 
-  <!-- Paieskos forma -->
-  <form action="{% url 'search' %}" method="get" class="d-flex">
-        <input name="query"
-               class="form-control"
-               type="text"
-               placeholder="Ieškoti automobilio..."
-               value="{{ request.GET.query|default:'' }}"
-               style="width: 150px;">
-    </form>
+      <!-- Search + Auth buttons -->
+      <div class="d-flex align-items-center ms-auto gap-3">
 
-    {% if user.is_authenticated %}
-  <!-- Kai prisijunge vartotojas -->
-  <div class="d-flex align-items-center gap-3">
+        <!-- Search form -->
+        <form action="{% url 'search' %}" method="get" class="d-flex">
+            <input name="query"
+                   class="form-control"
+                   type="text"
+                   placeholder="{% trans 'Search car...' %}"
+                   value="{{ request.GET.query|default:'' }}"
+                   style="width: 150px;">
+        </form>
 
-            <!-- "Mano užsakymai" -->
+        {% if user.is_authenticated %}
+        <div class="d-flex align-items-center gap-3">
+            <!-- My orders -->
             <a href="{% url 'my_orders' %}" class="nav-link fw-bold">
-                Mano užsakymai
+                {% trans "My orders" %}
             </a>
 
-            <!-- Vartotojo vardas -->
+            <!-- User profile -->
             <a href="{% url 'profile' %}" class="nav-link d-flex align-items-center">
                 <svg class="bi bi-person me-1" width="1.6em" height="1.6em" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4z"/>
@@ -88,24 +87,24 @@
                 <span>{{ user.get_username }}</span>
             </a>
 
-            <!-- Isejimas -->
+            <!-- Logout -->
             <form method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-outline-danger btn-sm">Atsijungti</button>
+                <button type="submit" class="btn btn-outline-danger btn-sm">{% trans "Logout" %}</button>
             </form>
         </div>
 
-    {% else %}
-        <!-- Neautorizuotas vartotojas -->
+        {% else %}
+        <!-- Not authenticated -->
         <a href="{% url 'login' %}" class="btn btn-outline-primary">
-            Prisijungti
+            {% trans "Login" %}
         </a>
-    <a href="{% url 'signup' %}" class="btn btn-outline-primary">
-            Registruotis
+        <a href="{% url 'signup' %}" class="btn btn-outline-primary">
+            {% trans "Register" %}
         </a>
-    {% endif %}
+        {% endif %}
 
-</div>
+      </div>
 
     </div>
   </header><!-- End Header -->
@@ -125,24 +124,24 @@
             <span class="sitename">AutoService</span>
           </a>
           <div class="footer-contact pt-3">
-            <p>Vilnius, Lietuva</p>
-            <p><strong>Telefonas:</strong> <span>+370 600 00000</span></p>
-            <p><strong>El. paštas:</strong> <span>info@autoservice.lt</span></p>
+            <p>{% trans "Vilnius, Lithuania" %}</p>
+            <p><strong>{% trans "Phone" %}:</strong> <span>+370 600 00000</span></p>
+            <p><strong>{% trans "Email" %}:</strong> <span>info@autoservice.lt</span></p>
           </div>
         </div>
 
         <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Naudingos nuorodos</h4>
+          <h4>{% trans "Useful links" %}</h4>
           <ul>
-            <li><i class="bi bi-chevron-right"></i> <a href="{% url 'index' %}">Pagrindinis</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Apie mus</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Paslaugos</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Privatumo politika</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="{% url 'index' %}">{% trans "Home" %}</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">{% trans "About Us" %}</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">{% trans "Services" %}</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">{% trans "Privacy Policy" %}</a></li>
           </ul>
         </div>
 
         <div class="col-lg-4 col-md-12">
-          <h4>Sekite mus</h4>
+          <h4>{% trans "Follow us" %}</h4>
           <div class="social-links d-flex">
             <a href="#"><i class="bi bi-twitter-x"></i></a>
             <a href="#"><i class="bi bi-facebook"></i></a>
@@ -154,9 +153,9 @@
     </div>
 
     <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">AutoService {% now "Y" %}</strong> <span>Visos teisės saugomos</span></p>
+      <p>© <span>{% trans "Copyright" %}</span> <strong class="px-1 sitename">AutoService {% now "Y" %}</strong> <span>{% trans "All rights reserved" %}</span></p>
       <div class="credits">
-        Šablonas <a href="https://bootstrapmade.com/">BootstrapMade</a> | Pritaikė tavo vardas
+        {% trans "Template" %} <a href="https://bootstrapmade.com/">BootstrapMade</a> | {% trans "Adapted by" %} tavo vardas
       </div>
     </div>
 

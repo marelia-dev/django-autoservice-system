@@ -1,12 +1,12 @@
 {% extends "autoservice/base.html" %}
-
 {% load static %}
+{% load i18n %}
 
-{% block title %}Pagrindinis - AutoService{% endblock %}
+{% block title %}Home - AutoService{% endblock %}
 
 {% block content %}
 
-    <!-- Hero sekcija su fonu ir overlay -->
+    <!-- Hero section -->
     <section class="hero position-relative"
              style="background-image: url('{% static 'autoservice/img/background-hero.jpg' %}');
                     background-size: cover;
@@ -14,58 +14,58 @@
                     background-repeat: no-repeat;
                     min-height: 80vh;">
 
-        <!-- Tamsus overlay tekstui -->
+        <!-- Dark overlay -->
         <div class="position-absolute top-0 start-0 w-100 h-100"
              style="background: rgba(0, 0, 0, 0.55);"></div>
 
-        <!-- Kontentas virs overlay -->
+        <!-- Content above overlay -->
         <div class="container position-relative z-2 py-5">
             <h1 class="text-center text-white mb-4">AutoService</h1>
             <p class="lead fs-3 text-center text-white mb-5">
-                Profesionalus autoservisas su meile automobiliams
+                {% trans "Professional car service with love for cars" %}
             </p>
 
             <div class="row justify-content-center g-4">
-                <!-- Paslaugos -->
+                <!-- Services -->
                 <div class="col-md-3">
                     <div class="card stat-card text-white bg-primary shadow h-100">
                         <div class="card-body text-center">
-                            <h5 class="card-title">Paslaugos</h5>
+                            <h5 class="card-title">{% trans "Services" %}</h5>
                             <p class="card-text display-4 fw-bold">{{ num_services }}</p>
-                            <small>Siūlome įvairias paslaugas</small>
+                            <small>{% trans "We offer various services" %}</small>
                         </div>
                     </div>
                 </div>
 
-                <!-- Užsakymai -->
+                <!-- Orders -->
                 <div class="col-md-3">
                     <div class="card stat-card text-white bg-info shadow h-100">
                         <div class="card-body text-center">
-                            <h5 class="card-title">Užsakymai</h5>
+                            <h5 class="card-title">{% trans "Orders" %}</h5>
                             <p class="card-text display-4 fw-bold">{{ num_orders }}</p>
-                            <small>Registruoti per visą laiką</small>
+                            <small>{% trans "Registered over all time" %}</small>
                         </div>
                     </div>
                 </div>
 
-                <!-- Automobiliai -->
+                <!-- Cars -->
                 <div class="col-md-3">
                     <div class="card stat-card text-white bg-warning shadow h-100">
                         <div class="card-body text-center">
-                            <h5 class="card-title">Automobiliai</h5>
+                            <h5 class="card-title">{% trans "Cars" %}</h5>
                             <p class="card-text display-4 fw-bold">{{ num_cars }}</p>
-                            <small>Aptarnauti klientai</small>
+                            <small>{% trans "Served customers" %}</small>
                         </div>
                     </div>
                 </div>
 
-                <!-- Baigti užsakymai -->
+                <!-- Completed orders -->
                 <div class="col-md-3">
                     <div class="card stat-card text-white bg-success shadow h-100">
                         <div class="card-body text-center">
-                            <h5 class="card-title">Baigti užsakymai</h5>
+                            <h5 class="card-title">{% trans "Completed orders" %}</h5>
                             <p class="card-text display-4 fw-bold">{{ num_orders_completed }}</p>
-                            <small>Sėkmingai atlikti</small>
+                            <small>{% trans "Successfully completed" %}</small>
                         </div>
                     </div>
                 </div>
@@ -73,20 +73,23 @@
 
             <div class="text-center mt-5">
                 <a href="#kontaktai" class="btn btn-lg btn-danger px-5 py-3">
-                    Užsiregistruoti dabar →
+                    {% trans "Register now" %} →
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Papildoma sekcija -->
+    <!-- Additional section -->
     <section class="py-5 bg-light">
         <div class="container text-center">
-            <h2 class="mb-4">Kodėl renkasi mus?</h2>
-            <p class="lead">Patirtis daugiau nei 10 metų • Garantija darbams • Sąžiningos kainos</p>
-                                    <p class="lead">Čia jūs lankotes {{ num_visits }}-ą kartą.</p>
+            <h2 class="mb-4">{% trans "Why choose us?" %}</h2>
+            <p class="lead">
+                {% trans "Over 10 years of experience • Work guarantee • Fair prices" %}
+            </p>
+            <p class="lead">
+                {% trans "This is your" %} {{ num_visits }}{% trans "th visit." %}
+            </p>
         </div>
     </section>
-
 
 {% endblock %}

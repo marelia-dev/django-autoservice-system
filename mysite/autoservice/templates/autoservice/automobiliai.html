@@ -1,35 +1,44 @@
 {% extends "autoservice/base.html" %}
 {% load static %}
+{% load i18n %}   {# ← обязательно добавить #}
 
-{% block title %}Automobiliai{% endblock %}
+{% block title %}{% trans "Cars" %}{% endblock %}
 
 {% block content %}
 
 <div class="container mt-5">
-    <h1 class="mb-4">Automobiliai</h1>
-    <p class="lead mb-4">Autoservise užregistruoti automobiliai: <strong>{{ automobiliai.paginator.count }}</strong></p>
+    <h1 class="mb-4">{% trans "Cars" %}</h1>
+    <p class="lead mb-4">
+        {% blocktrans %}Registered cars in the auto service: <strong>{{ count }}</strong>{% endblocktrans %}
+    </p>
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for car in automobiliai %}
         <div class="col">
             <div class="card h-100 shadow-sm">
 
-                <!-- Automobilio nuotrauka -->
+                <!-- Car image -->
                 {% if car.cover %}
-                    <img src="{{ car.cover.url }}" class="card-img-top" alt="{{ car.make }} {{ car.model }}" style="height: 200px; object-fit: cover;">
+                    <img src="{{ car.cover.url }}"
+                         class="card-img-top"
+                         alt="{{ car.make }} {{ car.model }}"
+                         style="height: 200px; object-fit: cover;">
                 {% else %}
-                    <img src="{% static 'autoservice/img/No_Image.jpg' %}" class="card-img-top" alt="No image" style="height: 200px; object-fit: cover;">
+                    <img src="{% static 'autoservice/img/No_Image.jpg' %}"
+                         class="card-img-top"
+                         alt="{% trans 'No image' %}"
+                         style="height: 200px; object-fit: cover;">
                 {% endif %}
 
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">{{ car.make }} {{ car.model }}</h5>
                     <p class="card-text text-muted mb-3">
                         {{ car.license_plate }}<br>
-                        <small>Klientas: {{ car.client_name }}</small>
+                        <small>{% trans "Client" %}: {{ car.client_name }}</small>
                     </p>
 
                     <a href="{% url 'car' car.id %}" class="btn btn-primary mt-auto">
-                        Detaliau →
+                        {% trans "Details" %} →
                     </a>
                 </div>
             </div>
@@ -37,19 +46,21 @@
         {% empty %}
         <div class="col-12">
             <div class="alert alert-info text-center">
-                Nėra užregistruotų automobilių.
+                {% trans "No registered cars yet." %}
             </div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- Paginacija -->
+    <!-- Pagination -->
     {% if automobiliai.has_other_pages %}
-    <nav aria-label="Automobilių puslapiai" class="mt-5">
+    <nav aria-label="{% trans 'Car pagination' %}" class="mt-5">
         <ul class="pagination justify-content-center">
             {% if automobiliai.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ automobiliai.previous_page_number }}">← Ankstesnis</a>
+                <a class="page-link" href="?page={{ automobiliai.previous_page_number }}">
+                    {% trans "Previous" %} ←
+                </a>
             </li>
             {% endif %}
 
@@ -65,7 +76,9 @@
 
             {% if automobiliai.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ automobiliai.next_page_number }}">Kitas →</a>
+                <a class="page-link" href="?page={{ automobiliai.next_page_number }}">
+                    {% trans "Next" %} →
+                </a>
             </li>
             {% endif %}
         </ul>

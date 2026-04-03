@@ -1,40 +1,39 @@
 {% extends "autoservice/base.html" %}
-{% load static %}
+{% load i18n %}
 {% load crispy_forms_tags %}
-
-{% block title %}Užsakymas №{{ order.id }}{% endblock %}
+{% block title %}Order №{{ order.id }}{% endblock %}
 
 {% block content %}
 
 <div class="container my-5" style="margin-top: 5rem !important; margin-bottom: 5rem !important;">
     <div class="card shadow-lg border-0 rounded-4" style="overflow: hidden;">
 
-        <!-- Заголовок -->
+        <!-- Header -->
         <div class="card-header bg-primary text-white py-5" style="padding: 2rem 1.5rem !important;">
-            <h3 class="mb-0 text-center">Užsakymas №{{ order.id }}</h3>
+            <h3 class="mb-0 text-center">{% trans "Order" %} №{{ order.id }}</h3>
         </div>
 
-        <!-- Основная информация -->
+        <!-- Main information -->
         <div class="card-body" style="padding: 4rem 3rem !important;">
             <div class="row" style="margin-bottom: 4rem !important; row-gap: 3rem !important;">
                 <div class="col-md-6">
                     <div style="margin-bottom: 3rem !important;">
-                        <strong style="display: block; font-size: 1.4rem; margin-bottom: 0.8rem;">Automobilis</strong>
+                        <strong style="display: block; font-size: 1.4rem; margin-bottom: 0.8rem;">{% trans "Car" %}</strong>
                         <p style="margin: 0; font-size: 1.3rem;">{{ order.car }}</p>
                     </div>
                     <div>
-                        <strong style="display: block; font-size: 1.4rem; margin-bottom: 0.8rem;">Klientas</strong>
+                        <strong style="display: block; font-size: 1.4rem; margin-bottom: 0.8rem;">{% trans "Client" %}</strong>
                         <p style="margin: 0; font-size: 1.3rem;">{{ order.car.client_name }}</p>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div style="margin-bottom: 3rem !important;">
-                        <strong style="display: block; font-size: 1.4rem; margin-bottom: 0.8rem;">Data</strong>
+                        <strong style="display: block; font-size: 1.4rem; margin-bottom: 0.8rem;">{% trans "Date" %}</strong>
                         <p style="margin: 0; font-size: 1.3rem;">{{ order.date|date:"Y-m-d H:i" }}</p>
                     </div>
                     <div>
-                        <strong style="display: block; font-size: 1.4rem; margin-bottom: 0.8rem;">Būsena</strong>
+                        <strong style="display: block; font-size: 1.4rem; margin-bottom: 0.8rem;">{% trans "Status" %}</strong>
                         <span class="badge
                             {% if order.status == 'new' %}bg-primary
                             {% elif order.status == 'in_progress' %}bg-info
@@ -49,8 +48,8 @@
                 </div>
             </div>
 
-            <!-- === PASLAUGOS (Управление строками) === -->
-        <h4 class="mb-4">Paslaugos</h4>
+            <!-- Services -->
+            <h4 class="mb-4">{% trans "Services" %}</h4>
 
             <form method="post" class="mb-5">
                 {% csrf_token %}
@@ -59,7 +58,7 @@
                 {% for form in line_formset %}
                 <div class="row mb-3 p-3 border rounded bg-light align-items-end">
 
-                    <!-- Только одно скрытое поле ID -->
+                    <!-- Hidden ID field -->
                     {{ form.id }}
 
                     <div class="col-md-6">
@@ -69,7 +68,7 @@
                         {{ form.quantity|as_crispy_field }}
                     </div>
 
-                    <!-- Один чекбокс для удаления -->
+                    <!-- Delete checkbox -->
                     <div class="col-md-3 d-flex align-items-center">
                         {% if form.instance.pk %}
                         <div class="form-check">
@@ -78,7 +77,7 @@
                                    id="delete_{{ forloop.counter0 }}">
                             <label class="form-check-label text-danger fw-bold"
                                    for="delete_{{ forloop.counter0 }}">
-                                Ištrinti
+                                {% trans "Delete" %}
                             </label>
                         </div>
                         {% endif %}
@@ -86,19 +85,19 @@
                 </div>
                 {% endfor %}
 
-                <button type="submit" class="btn btn-primary">Išsaugoti paslaugas</button>
+                <button type="submit" class="btn btn-primary">{% trans "Save services" %}</button>
             </form>
 
-            <!-- Таблица услуг (для просмотра) -->
+            <!-- Services table (view only) -->
             {% if order.order_lines.exists %}
             <div class="table-responsive mb-5">
                 <table class="table table-bordered table-striped table-hover">
                     <thead class="table-dark">
                         <tr>
-                            <th>Paslauga</th>
-                            <th class="text-center">Kiekis</th>
-                            <th class="text-end">Kaina vnt.</th>
-                            <th class="text-end">Suma eilutėje</th>
+                            <th>{% trans "Service" %}</th>
+                            <th class="text-center">{% trans "Quantity" %}</th>
+                            <th class="text-end">{% trans "Price per unit" %}</th>
+                            <th class="text-end">{% trans "Line total" %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -113,18 +112,18 @@
                     </tbody>
                     <tfoot class="table-light fw-bold">
                         <tr>
-                            <td colspan="3" class="text-end">Bendra suma:</td>
+                            <td colspan="3" class="text-end">{% trans "Total" %}:</td>
                             <td class="text-end">{{ order.total }} €</td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
             {% else %}
-            <p class="text-muted">Šiam užsakymui dar nepriskirta jokių paslaugų.</p>
+            <p class="text-muted">{% trans "No services assigned to this order yet." %}</p>
             {% endif %}
 
-            <!-- Komentarai / Atsiliepimai -->
-            <h2 class="mt-5 mb-4">Komentarai / Atsiliepimai</h2>
+            <!-- Comments / Reviews -->
+            <h2 class="mt-5 mb-4">{% trans "Comments / Reviews" %}</h2>
 
             {% if order.reviews.all %}
                 {% for review in order.reviews.all %}
@@ -155,18 +154,18 @@
                 </div>
                 {% endfor %}
             {% else %}
-                <p class="text-muted fst-italic">Šiam užsakymui atsiliepimų dar nėra.</p>
+                <p class="text-muted fst-italic">{% trans "No reviews for this order yet." %}</p>
             {% endif %}
 
         </div>
 
-        <!-- Кнопки внизу -->
+        <!-- Footer buttons -->
         <div class="card-footer bg-light text-center py-4">
             <a href="{% url 'uzsakymai' %}" class="btn btn-outline-secondary btn-lg me-3 px-4">
-                ← Grįžti į sąrašą
+                ← {% trans "Back to list" %}
             </a>
             <a href="{% url 'index' %}" class="btn btn-outline-primary btn-lg px-4">
-                Į pagrindinį puslapį
+                {% trans "To home page" %}
             </a>
         </div>
     </div>

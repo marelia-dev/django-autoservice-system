@@ -1,19 +1,20 @@
 {% extends "autoservice/base.html" %}
+{% load i18n %}
 
-{% block title %}Paslaugos{% endblock %}
+{% block title %}Services{% endblock %}
 
 {% block content %}
 <div class="container my-5">
-    <h1>Paslaugos</h1>
+    <h1>{% trans "Services" %}</h1>
     {% for p in paslaugos %}
         <div class="card mb-3">
             <div class="card-body">
                 <h5>{{ p.name }}</h5>
-                <p>Kaina: {{ p.price }} €</p>
+                <p>{% trans "Price" %}: {{ p.price }} €</p>
             </div>
         </div>
     {% empty %}
-        <p>Nėra paslaugų.</p>
+        <p>{% trans "No services available." %}</p>
     {% endfor %}
 </div>
 {% endblock %}
